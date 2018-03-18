@@ -1,4 +1,3 @@
-import itertools
 import pygame as pg
 
 
@@ -7,24 +6,39 @@ pg.init()
 BLACK = pg.Color('black')
 WHITE = pg.Color('white')
 RED = pg.Color('red')
-screen = pg.display.set_mode((800, 600))
+
+
+total_w=800
+total_h=600
+
+tiles_per_row=7
+tiles_per_col=7
+
+tile_w = int(total_w/tiles_per_row)
+tile_h = int(total_h/tiles_per_col)
+
+total_w=tiles_per_row*tile_w
+total_h=tiles_per_col*tile_h
+
+screen = pg.display.set_mode((total_w, total_h))
 clock = pg.time.Clock()
 
-colors = itertools.cycle((WHITE, BLACK))
-tile_size = 5
-width, height = 8*tile_size, 8*tile_size
-background = pg.Surface((width, height))
-#background.fill(WHITE)
+background = pg.Surface((total_w, total_h))
+background.fill(WHITE)
 
-#for y in range(height):
-#    for x in range(width):
-#        rect = (x, y, 1, tile_size)
-#        pg.draw.rect(background, BLACK, rect)
 
-rect = (10,1, 1, tile_size)
-pg.draw.rect(background, BLACK, rect)
-rect = (20,10, 10, tile_size)
-pg.draw.rect(background, WHITE, rect)
+
+
+for y in range(0,total_h,tile_h):
+    for x in range(0,total_w,tile_w):
+        rect = (x, y, tile_w, tile_h)
+        pg.draw.rect(background, BLACK, rect,1)
+
+
+#rect1 = (50,10, 10, 100)
+#pg.draw.rect(background, BLACK, rect1,1)
+#rect2 = (50,1, 10, tile_size)
+#pg.draw.rect(background, BLACK, rect2)
 game_exit = False
 while not game_exit:
     for event in pg.event.get():
@@ -32,7 +46,7 @@ while not game_exit:
             game_exit = True
 
     screen.fill((60, 70, 90))
-    screen.blit(background, (400, 300))
+    screen.blit(background, (0, 0))
 
     pg.display.flip()
     clock.tick(30)

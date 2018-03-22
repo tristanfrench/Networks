@@ -8,11 +8,11 @@ Created on Mon Mar 19 22:52:22 2018
 import numpy as np
 
 def p2_dist(a,b):
-    return (a[0]-b[0])
+    return np.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2)
 
 class grid:
     __vision_range = 3
-    __directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]    
+    __directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]   
     
     def __init__(self,size,obstacles):
         self.__width = size[0]
@@ -79,18 +79,21 @@ class grid:
                 continue
         return visible
     
-    def risk(self,coord):
-        r = 0
-        for d in self.__directions:
-            squ = [coord[0]+d[0],coord[1]+d[1]]
-            if self.__obstacles[squ[0]][squ[1]]==1:
-                r++
-        return r
+    def set_risk(self):
+        self.__risk = np.zeros((self.__width,self.__height))
+        for x in range(0,self.__width):
+            for y in range(1,self.__height):
+                surrounding_obstacles = 0
+                for d in self.__directions:
+                    if self.__obstacles[x+d[0]][y+d[1]]==1:
+                        surrounding_obstacles+=1
+                self.__risk[x][y] = surrounding_obstacles
     
     def set_heuristic(self,goal):
         self.__heuristic = np.zeros((self.__width,self.__height))
         for x in range(0,self.__width):
             for y in range(0,self.___height):
+                self.__heuristic[x][y] = p2_dist([x,y],goal)
                 
                 
 

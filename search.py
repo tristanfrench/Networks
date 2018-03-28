@@ -36,8 +36,8 @@ def find_path(grid,start,end,alpha=1,beta=1):
     frontier = np.zeros((num_states,1))
     frontier = frontier.astype(int)
     # initialise cost values.
-    max_cost = 2*num_states
-    cost = max_cost*np.ones((num_states,1))
+    inf_cost = 2*num_states
+    cost = inf_cost*np.ones((num_states,1))
     total_cost = 0
     # initialise estimate values (based on risk and heuristic) and paths.
     estimate = np.zeros((num_states,1))
@@ -51,6 +51,7 @@ def find_path(grid,start,end,alpha=1,beta=1):
     start_index = coord2index(start,grid.get_width())
     frontier[start_index] = 1
     cost[start_index] = 0
+    goal_reached = False
     while sum(frontier)>0:
         # find a grid square index in the frontier set with minimal cost.
         index = np.argmin((3-alpha-beta)*cost+estimate,axis=0)
@@ -61,6 +62,7 @@ def find_path(grid,start,end,alpha=1,beta=1):
         if index==coord2index(end,grid.get_width()):
             total_cost = cost[index]
             optimal_path = paths[index]
+            goal_reached = True
             break
         parent = index2coord(index,grid.get_width())
         children = grid.neighbours(parent,grid_object.labels['empty'])
@@ -76,5 +78,8 @@ def find_path(grid,start,end,alpha=1,beta=1):
                 frontier[child_index] = 1
                 paths[child_index] = paths[index]+[child]
         # reset cost of explored grid square.
-        cost[index] = max_cost
-    return [total_cost[0],optimal_path]
+        cost[index] = inf_cost
+    if goal_reached:
+        return [total_cost[0],optimal_path]
+    else :
+        return [inf_cost,paths]

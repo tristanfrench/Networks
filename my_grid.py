@@ -9,7 +9,6 @@ def main(tiles_per_row,tiles_per_col):
     WHITE = pg.Color('white')
     RED = pg.Color('red')
     
-    
     total_w=800
     total_h=600
     

@@ -52,19 +52,19 @@ class grid:
         '''
         return self.__height
     
-#    def get_state(self):
-#        '''
-#        Returns the matrix of state indices. Empty grid spaces are represented
-#        by zeros and obstacles with ones. 
-#        '''
-#        return self.__states
+    def get_state(self,coord):
+        '''
+        Returns the matrix of state indices. Empty grid spaces are represented
+        by zeros and obstacles with ones. 
+        '''
+        return self.__states[coord[0]][coord[1]]
     
     def is_in_grid(self,coord):
         '''
         Checks whether an input coordinate is within the boundaries of the
         grid.
         '''
-        if 1<=coord[0]<=self.__width and 1<=coord[1]<=self.__height:
+        if 0<=coord[0]<self.__width and 0<=coord[1]<self.__height:
             return True
         return False
     
@@ -139,17 +139,21 @@ class grid:
                 for d in self.__directions:
                     squ = [coord[0]+d[0],coord[1]+d[1]]
                     if (self.is_in_grid(squ) and
-                        self.__states[squ[0]][squ[1]]==label['obstacle']):
+                        self.__states[squ[0]][squ[1]]==labels['obstacle']):
                         surrounding_obstacles+=1
                 self.__risk[coord[0]][coord[1]] = surrounding_obstacles
     
-    def get_risk(self,coord):
+    def get_risk(self,coord=[]):
         '''
-        Return the risk value for a given grid square.
+        Return the risk value for a given grid square or, by default, the
+        entire array.
         '''
-        return self.__risk[coord[0]][coord[1]]
+        if len(coord)==0:
+            return self.__risk
+        else :
+            return self.__risk[coord[0]][coord[1]]
     
-    def set_heuristic(self,goal):
+    def update_heuristic(self,goal):
         '''
         Stores the values of the heuristic for each grid square, calculated
         as the euclidean distance between grid squares and a goal square.
@@ -158,11 +162,15 @@ class grid:
             for y in range(0,self.___height):
                 self.__heuristic[x][y] = p2_dist([x,y],goal)
     
-    def get_heuristic(self,coord):
+    def get_heuristic(self,coord=[]):
         '''
-        Return the heuristic value for a given grid square.
+        Return the heuristic value for a given grid square or, by default, the
+        entire array.
         '''
-        return self.__heuristic[coord[0]][coord[1]]
+        if len(coord)==0:
+            return self.__heuristic
+        else :
+            return self.__heuristic[coord[0]][coord[1]]
     
     def neighbours(self,coord,desc):
         '''
@@ -172,16 +180,6 @@ class grid:
         neighbs = []
         for d in self.__directions:
             squ = [coord[0]+d[0],coord[1]+d[1]]
-            if self.is_in_grid(squ) and self.__state[squ[0]][squ[1]]==desc:
+            if self.is_in_grid(squ) and self.__states[squ[0]][squ[1]]==desc:
                 neighbs.append(squ)
         return neighbs
-    
-#random test commands
-'''
-size = (10,10)
-ob1 = [[3,4],[4,4],[3,3],[4,5]]
-ob2 = [[6,8],[7,8],[8,8],[9,8]]
-obstacles = ob1+ob2
-drone_map = grid(size,obstacles)
-environment = grid(size,[])
-'''

@@ -10,9 +10,10 @@ import numpy as np
 import grid_object
 import search
 
-test1 = grid_object.grid((3,3),[[1,1]])
-result = search.find_path(test1,[0,0],[2,2])
-
+test1 = grid_object.grid((3,3),[])
+result1 = search.find_path(test1,[0,0],[2,2])
+test2 = grid_object.grid((3,3),[[1,1]])
+result2 = search.find_path(test1,[0,0],[2,2])
 
 
 

@@ -52,10 +52,15 @@ class grid:
         '''
         return self.__height
     
+    def update_state(self,coord,value):
+        '''
+        Updates the state of a specified grid square.
+        '''
+        self.__states[coord[0]][coord[1]] = value
+    
     def get_state(self,coord):
         '''
-        Returns the matrix of state indices. Empty grid spaces are represented
-        by zeros and obstacles with ones. 
+        Returns the state of a specified grid square. 
         '''
         return self.__states[coord[0]][coord[1]]
     
@@ -70,7 +75,7 @@ class grid:
     
     def vision_field(self,coord):
         '''
-        Calculates a list of grid spaces that are visible from a given input
+        Calculates a list of grid squares that are visible from a given input
         coordinate.
         '''
         visible = []
@@ -79,10 +84,10 @@ class grid:
             if d[0]*d[1]==0:
                 # iterate through a maximum of three steps.
                 for inc in range(1,self.__vision_range+1):
-                    squ = [coord[0]+inc*d[0],coord[1]+inc*d[1]]
-                    visible.append(squ)
-                    if (not self.is_in_grid(self,squ) or
-                        self.__states[squ[0]][squ[1]]!=labels['empty']):
+                    square = [coord[0]+inc*d[0],coord[1]+inc*d[1]]
+                    visible.append(square)
+                    if (not self.is_in_grid(self,square) or
+                        self.__states[square[0]][square[1]]!=labels['empty']):
                         break
             else :
                 blocked_x = False
@@ -91,38 +96,40 @@ class grid:
                 for inc in range(1,self.__vision_range):
                     squ = [coord[0]+inc*d[0],coord[1]+inc*d[1]]
                     # check if off-diagonals are obstructed.
-                    blocked_x = (self.__states[squ[0]-d[0]][squ[1]]==
+                    blocked_x = (self.__states[square[0]-d[0]][square[1]]==
                                  labels['obstacle'] or blocked_x)
-                    blocked_y = (self.__states[squ[0]][squ[1]-d[1]]==
+                    blocked_y = (self.__states[square[0]][square[1]-d[1]]==
                                  labels['obstacle'] or blocked_y)
-                    if (self.is_in_grid(self,squ) and
+                    if (self.is_in_grid(self,square) and
                         (not blocked_x or not blocked_y) and
-                        self.__states[squ[0]][squ[1]]==labels['empty']):
-                        visible.append(squ)
+                        self.__states[square[0]][square[1]]==labels['empty']):
+                        visible.append(square)
                     else :
                         break
         # vectors to check the grid squares missed by above directions.
         knight_moves = [[1,2],[-1,2],[1,-2],[-1,-2],
                         [2,1],[-2,1],[2,-1],[-2,-1]]
         for d in knight_moves:
-            squ = [coord[0]+d[0],coord[1]+d[1]]
-            # define intermidiate moves between 'coord' and 'squ'.
+            square = [coord[0]+d[0],coord[1]+d[1]]
+            # define intermidiate moves between 'coord' and 'square'.
             s1 = [d[0]/abs(d[0]),d[1]/abs(d[1])]
             s2 = [d[0]-s1[0],d[1]-s1[1]]
-            if (self.is_in_grid(self,squ) and 
-                self.__states[squ[0]-s1[0]][squ[1]-s1[1]]==labels['empty'] and
-                self.__states[squ[0]-s2[0]][squ[1]-s2[1]]==labels['empty']):
-                visible.append(squ)
+            if (self.is_in_grid(self,square) and 
+                self.__states[square[0]-s1[0]][square[1]-s1[1]]==
+                labels['empty'] and
+                self.__states[square[0]-s2[0]][square[1]-s2[1]]==
+                labels['empty']):
+                visible.append(square)
             else :
                 continue
         return visible
     
-    def update_risk(self,squares=[]):
+    def update_risk(self,coord_list=[]):
         '''
         Updates the risk values of an optional selection of grid squares; by
         default, all values are updated.
         '''
-        if len(squares)==0:
+        if len(coord_list)==0:
             for x in range(0,self.__width):
                 for y in range(1,self.__height):
                     surrounding_obstacles = 0
@@ -133,13 +140,14 @@ class grid:
                             surrounding_obstacles+=1
                     self.__risk[x][y] = surrounding_obstacles
         else :
-            for i in range(0,len(squares)):
-                coord = squares[i]
+            for i in range(0,len(coord_list)):
+                coord = coord_list[i]
                 surrounding_obstacles = 0
                 for d in self.__directions:
-                    squ = [coord[0]+d[0],coord[1]+d[1]]
-                    if (self.is_in_grid(squ) and
-                        self.__states[squ[0]][squ[1]]==labels['obstacle']):
+                    square = [coord[0]+d[0],coord[1]+d[1]]
+                    if (self.is_in_grid(square) and
+                        self.__states[square[0]][square[1]]==
+                        labels['obstacle']):
                         surrounding_obstacles+=1
                 self.__risk[coord[0]][coord[1]] = surrounding_obstacles
     
@@ -172,14 +180,14 @@ class grid:
         else :
             return self.__heuristic[coord[0]][coord[1]]
     
-    def neighbours(self,coord,desc):
+    def neighbours(self,coord,value):
         '''
         Return a list of grid squares neighbouring a given coordinate with a
-        specified state.
+        specified state value.
         '''
         neighbs = []
         for d in self.__directions:
             squ = [coord[0]+d[0],coord[1]+d[1]]
-            if self.is_in_grid(squ) and self.__states[squ[0]][squ[1]]==desc:
+            if self.is_in_grid(squ) and self.__states[squ[0]][squ[1]]==value:
                 neighbs.append(squ)
         return neighbs

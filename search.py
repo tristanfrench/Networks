@@ -26,23 +26,23 @@ def index2coord(index,width):
 def find_path(grid,start,end,alpha=1,beta=1):
     '''
     Calculates an optimal path through 'grid' from 'start' to 'end'. 'alpha'
-    repreents the relative weighting of the heuristic and 'beta' represents the
-    relative weighting of the risk.
+    represents the relative weighting of the heuristic and 'beta' represents
+    the relative weighting of the risk.
     '''
     # initialise flags for explored and frontier sets.
-    num_states = grid.get_width()*grid.get_height()
-    explored = np.zeros((num_states,1))
+    num_squares = grid.get_width()*grid.get_height()
+    explored = np.zeros((num_squares,1))
     explored = explored.astype(int)
-    frontier = np.zeros((num_states,1))
+    frontier = np.zeros((num_squares,1))
     frontier = frontier.astype(int)
     # initialise cost values.
-    inf_cost = 2*num_states
-    cost = inf_cost*np.ones((num_states,1))
+    inf_cost = 2*num_squares
+    cost = inf_cost*np.ones((num_squares,1))
     total_cost = 0
     # initialise estimate values (based on risk and heuristic) and paths.
-    estimate = np.zeros((num_states,1))
+    estimate = np.zeros((num_squares,1))
     paths = []
-    for state in range(0,num_states):
+    for state in range(0,num_squares):
         squ = index2coord(state,grid.get_width())
         estimate[state] = alpha*grid.get_heuristic(squ)+beta*grid.get_risk(squ)
         paths.append([start])

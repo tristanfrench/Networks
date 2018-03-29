@@ -77,6 +77,7 @@ class grid:
         '''
         Calculates a list of grid squares that are visible from a given input
         coordinate.
+        MATT-TODO:This function could be made neater...
         '''
         visible = []
         for d in self.__directions:
@@ -85,26 +86,39 @@ class grid:
                 # iterate through a maximum of three steps.
                 for inc in range(1,self.__vision_range+1):
                     square = [coord[0]+inc*d[0],coord[1]+inc*d[1]]
-                    visible.append(square)
-                    if (not self.is_in_grid(self,square) or
+                    included = False
+                    # if 'square' is in the grid...
+                    if self.is_in_grid(square):
+                        # ... flag as visible
+                        visible.append(square)
+                        included = True
+                        # if 'square' was not included or is not empty...
+                    if (not included or
                         self.__states[square[0]][square[1]]!=labels['empty']):
+                        # ... do not continue in current direction.
                         break
             else :
                 blocked_x = False
                 blocked_y = False
                 # with diagonal lines of sight, iterate once fewer.
                 for inc in range(1,self.__vision_range):
-                    squ = [coord[0]+inc*d[0],coord[1]+inc*d[1]]
-                    # check if off-diagonals are obstructed.
-                    blocked_x = (self.__states[square[0]-d[0]][square[1]]==
-                                 labels['obstacle'] or blocked_x)
-                    blocked_y = (self.__states[square[0]][square[1]-d[1]]==
-                                 labels['obstacle'] or blocked_y)
-                    if (self.is_in_grid(self,square) and
-                        (not blocked_x or not blocked_y) and
-                        self.__states[square[0]][square[1]]==labels['empty']):
-                        visible.append(square)
-                    else :
+                    square = [coord[0]+inc*d[0],coord[1]+inc*d[1]]
+                    # if 'square' is in the grid and not blocked...
+                    included = False
+                    if (self.is_in_grid(square)):
+                        # check if off-diagonals are obstructed.
+                        blocked_x = (self.__states[square[0]-d[0]][square[1]]==
+                                     labels['obstacle'] or blocked_x)
+                        blocked_y = (self.__states[square[0]][square[1]-d[1]]==
+                                     labels['obstacle'] or blocked_y)
+                        if not blocked_x or not blocked_y:
+                            # ... flag as visible
+                            visible.append(square)
+                            included = True
+                    # if 'square' was not included or is not empty...
+                    if (not included or
+                        self.__states[square[0]][square[1]]!=labels['empty']):
+                        # ... do not continue in current direction.
                         break
         # vectors to check the grid squares missed by above directions.
         knight_moves = [[1,2],[-1,2],[1,-2],[-1,-2],
@@ -112,9 +126,9 @@ class grid:
         for d in knight_moves:
             square = [coord[0]+d[0],coord[1]+d[1]]
             # define intermidiate moves between 'coord' and 'square'.
-            s1 = [d[0]/abs(d[0]),d[1]/abs(d[1])]
-            s2 = [d[0]-s1[0],d[1]-s1[1]]
-            if (self.is_in_grid(self,square) and 
+            s1 = [int(d[0]/abs(d[0])),int(d[1]/abs(d[1]))]
+            s2 = [int(d[0]-s1[0]),int(d[1]-s1[1])]
+            if (self.is_in_grid(square) and 
                 self.__states[square[0]-s1[0]][square[1]-s1[1]]==
                 labels['empty'] and
                 self.__states[square[0]-s2[0]][square[1]-s2[1]]==
@@ -167,7 +181,7 @@ class grid:
         as the euclidean distance between grid squares and a goal square.
         '''
         for x in range(0,self.__width):
-            for y in range(0,self.___height):
+            for y in range(0,self.__height):
                 self.__heuristic[x][y] = p2_dist([x,y],goal)
     
     def get_heuristic(self,coord=[]):
@@ -180,14 +194,15 @@ class grid:
         else :
             return self.__heuristic[coord[0]][coord[1]]
     
-    def neighbours(self,coord,value):
+    def neighbours(self,coord,value=-1):
         '''
         Return a list of grid squares neighbouring a given coordinate with a
         specified state value.
         '''
         neighbs = []
         for d in self.__directions:
-            squ = [coord[0]+d[0],coord[1]+d[1]]
-            if self.is_in_grid(squ) and self.__states[squ[0]][squ[1]]==value:
-                neighbs.append(squ)
+            square = [coord[0]+d[0],coord[1]+d[1]]
+            if (self.is_in_grid(square) and
+                (self.__states[square[0]][square[1]]==value or value==-1)):
+                neighbs.append(square)
         return neighbs

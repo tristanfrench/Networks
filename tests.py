@@ -5,24 +5,34 @@ Created on Wed Mar 28 19:55:32 2018
 @author: matth
 """
 
-import numpy as np
-
 import grid_object
 import search
+import journey
 
-test1 = grid_object.grid((3,3),[[1,1]])
-result1 = search.find_path(test1,[0,0],[2,2])
-test2 = grid_object.grid((3,3),[[1,1]])
-result2 = search.find_path(test2,[0,0],[2,2])
+sizeA = (3,3)
+startA = [0,0]
+endA = [2,2]
+test1 = grid_object.grid(sizeA,[])
+test1.update_risk()
+test1.update_heuristic(endA)
+result1 = search.find_path(test1,startA,endA)
+test2 = grid_object.grid(sizeA,[[1,1]])
+result2 = search.find_path(test2,startA,endA)
 
 
-
-
-'''
-size = (10,10)
+sizeB = (10,10)
 ob1 = [[3,4],[4,4],[3,3],[4,5]]
 ob2 = [[6,8],[7,8],[8,8],[9,8]]
 obstacles = ob1+ob2
-drone_map = grid_object.grid(size,obstacles)
-environment = grid_object.grid(size,[])
-'''
+startB = [0,0]
+endB = [9,9]
+inf = grid_object.grid(sizeB,[])
+inf.update_risk()
+inf.update_heuristic(endB)
+env = grid_object.grid(sizeB,obstacles)
+env.update_risk()
+env.update_heuristic(endB)
+results3 = journey.simulation(inf,env,[0,0],[9,9])
+real_cost = results3[0]
+perfect_path = search.find_path(env,startB,endB)
+best_cost = perfect_path[0]

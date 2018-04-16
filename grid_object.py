@@ -6,8 +6,9 @@ Created on Mon Mar 19 22:52:22 2018
 """
 
 import numpy as np
+import T_grid
 
-labels = {'empty':0,'obstacle':1}
+labels = {'empty':0,'obstacle':1,'start':2,'end':4.5}
 
 def p2_dist(a,b):
     '''
@@ -25,18 +26,26 @@ class grid:
     __vision_range = 3
     __directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]
     
-    def __init__(self,size,obstacles):
+    def __init__(self,size,obstacles,start,end):
         '''
         'size' is a vector that defines the dimensions of the grid. 'obstacles'
         is a list of coordinate locations for permanent obstacles in the grid.
         '''
         self.__width = size[0]
         self.__height = size[1]
+        self.__start=start
+        self.__end=end
         self.__states = np.zeros((self.__width,self.__height))
+        self.__colour = np.zeros((self.__width,self.__height))
         # int is used because states will contain discrete classifications.
         self.__states = self.__states.astype(int)
+
+        
+        self.__colour[start[0]][start[1]] = labels['start']
+        self.__colour[end[0]][end[1]] = labels['end']
         for ob in obstacles:
             self.__states[ob[0]][ob[1]] = labels['obstacle']
+            self.__colour[ob[0]][ob[1]] = labels['obstacle']
         self.__risk = np.zeros((self.__width,self.__height))
         self.__heuristic = np.zeros((self.__width,self.__height))
     
@@ -58,11 +67,14 @@ class grid:
         '''
         self.__states[coord[0]][coord[1]] = value
     
-    def get_state(self,coord):
+    def get_state(self,coord=[]):
         '''
         Returns the state of a specified grid square. 
         '''
-        return self.__states[coord[0]][coord[1]]
+        if len(coord)==0:
+            return self.__states
+        else :
+            return self.__states[coord[0]][coord[1]]
     
     def is_in_grid(self,coord):
         '''
@@ -145,7 +157,7 @@ class grid:
         '''
         if len(coord_list)==0:
             for x in range(0,self.__width):
-                for y in range(1,self.__height):
+                for y in range(0,self.__height):
                     surrounding_obstacles = 0
                     for d in self.__directions:
                         squ = [x+d[0],y+d[1]]
@@ -206,3 +218,14 @@ class grid:
                 (self.__states[square[0]][square[1]]==value or value==-1)):
                 neighbs.append(square)
         return neighbs
+    def update_path_colour(self,coord=[]):
+        '''
+        Updates the colour of the path taken from start to end
+        '''
+        for step in coord:
+            if step != self.__start and step != self.__end:
+                self.__colour[step[0]][step[1]]+=3.5
+    def show_me(self,x=[]):
+        T_grid.draw_grid(self.__colour)
+    
+    

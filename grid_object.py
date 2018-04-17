@@ -8,7 +8,8 @@ Created on Mon Mar 19 22:52:22 2018
 import numpy as np
 import T_grid
 
-labels = {'empty':0,'obstacle':1,'start':2,'end':4.5}
+labels = {'empty':0,'obstacle':1,'start':2,'end':4.5,'path':3.5}
+directions = [[1,1],[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1],[0,1]]
 
 def p2_dist(a,b):
     '''
@@ -24,13 +25,14 @@ class grid:
     simply stores vectors for horizontal, vertical and diagonal movements.
     '''
     __vision_range = 3
-    __directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]
+    ##__directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]
     
     def __init__(self,size,obstacles,start,end):
         '''
         'size' is a vector that defines the dimensions of the grid. 'obstacles'
         is a list of coordinate locations for permanent obstacles in the grid.
         '''
+        
         self.__width = size[0]
         self.__height = size[1]
         self.__start=start
@@ -42,6 +44,7 @@ class grid:
 
         
         self.__colour[start[0]][start[1]] = labels['start']
+        
         self.__colour[end[0]][end[1]] = labels['end']
         for ob in obstacles:
             self.__states[ob[0]][ob[1]] = labels['obstacle']
@@ -92,7 +95,7 @@ class grid:
         MATT-TODO:This function could be made neater...
         '''
         visible = []
-        for d in self.__directions:
+        for d in directions:
             # first deal with horizontal and vertical lines of sight.
             if d[0]*d[1]==0:
                 # iterate through a maximum of three steps.
@@ -109,6 +112,7 @@ class grid:
                         self.__states[square[0]][square[1]]!=labels['empty']):
                         # ... do not continue in current direction.
                         break
+            # secondly, deal with diagonal lines of sight.
             else :
                 blocked_x = False
                 blocked_y = False
@@ -159,7 +163,7 @@ class grid:
             for x in range(0,self.__width):
                 for y in range(0,self.__height):
                     surrounding_obstacles = 0
-                    for d in self.__directions:
+                    for d in directions:
                         squ = [x+d[0],y+d[1]]
                         if (self.is_in_grid(squ) and
                             self.__states[squ[0]][squ[1]]==labels['obstacle']):
@@ -169,7 +173,7 @@ class grid:
             for i in range(0,len(coord_list)):
                 coord = coord_list[i]
                 surrounding_obstacles = 0
-                for d in self.__directions:
+                for d in directions:
                     square = [coord[0]+d[0],coord[1]+d[1]]
                     if (self.is_in_grid(square) and
                         self.__states[square[0]][square[1]]==
@@ -212,19 +216,21 @@ class grid:
         specified state value.
         '''
         neighbs = []
-        for d in self.__directions:
+        for d in directions:
             square = [coord[0]+d[0],coord[1]+d[1]]
             if (self.is_in_grid(square) and
                 (self.__states[square[0]][square[1]]==value or value==-1)):
                 neighbs.append(square)
         return neighbs
-    def update_path_colour(self,coord=[]):
+    
+    def update_path_colour(self,coord_list=[]):
         '''
         Updates the colour of the path taken from start to end
         '''
-        for step in coord:
+        for step in coord_list:
             if step != self.__start and step != self.__end:
-                self.__colour[step[0]][step[1]]+=3.5
+                self.__colour[step[0]][step[1]] = labels['path']
+    
     def show_me(self,x=[]):
         T_grid.draw_grid(self.__colour)
     

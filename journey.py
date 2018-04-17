@@ -10,7 +10,15 @@ import numpy as np
 import grid_object
 import search
 
-def simulation(information,environment,start,end,alpha=1,beta=1):
+def dev(prob):
+    value = np.random.uniform()
+    cum_prob = np.cumsum(prob)
+    for p in range(0,len(cum_prob)):
+        if value < cum_prob[p]:
+            return p
+    return []
+
+def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
     '''
     Runs a theoretical simulation of a drone travelling through a grid trying
     to get from 'start' to 'end'. 'information' represents the drones knowledge
@@ -27,16 +35,49 @@ def simulation(information,environment,start,end,alpha=1,beta=1):
     record = []
     cost = 0
     step = 0
+    collisions = 0
     journey_complete = False
     while not journey_complete:
-        # move to the next square listed in the current route and update cost.
-        record.append(route[step])
+        # compute deviation index.
+        deviated = dev(move_prob)
+        if step==0:
+            deviated = 0
+        reroute_required = False
+        if not deviated:
+            # move to the next square listed in the current route.
+            record.append(route[step])
+        else :
+            reroute_required = True
+            # if the drone has deviated, find it's new position - 'trajectory'.
+            move_intent = [route[step][0]-record[step-1][0],
+                           route[step][1]-record[step-1][1]]
+            total_moves = len(grid_object.directions)
+            for d_num in range(0,total_moves):
+                if grid_object.directions[d_num]==move_intent:
+                    break
+            move_actual = grid_object.directions[(d_num+deviated)%total_moves]
+            trajectory = [record[step-1][0]+move_actual[0],
+                          record[step-1][1]+move_actual[1]]
+            if (environment.is_in_grid(trajectory) and
+                environment.get_state(trajectory)!=
+                grid_object.labels['obstacle']):
+                # if the deviation is a valid move, add to record.
+                record.append(trajectory)
+            else :
+                # if the deviation is not a valid move, remain stationary.
+                record.append(record[step-1])
+                collisions+=1
+        # calculate cost of most recent move.
         cost+=grid_object.p2_dist(record[step],record[step-1])
+        # stop simulation if drone has remained stationary for three 'moves'.
+        if (step>=3 and 
+            record[step]==record[step-1]==record[step-2]==record[step-3]):
+            break
         # terminate if the current square is the destination.
-        if record[step][0]==end[0] and record[step][1]==end[1]:
+        if record[step]==end:
             journey_complete = True
             break
-        # identify squares ni the current field of vision.
+        # identify squares in the current field of vision.
         sight = environment.vision_field(record[step])
         changes = []
         # find and correct any visible errors in the drones knowledge.
@@ -45,7 +86,6 @@ def simulation(information,environment,start,end,alpha=1,beta=1):
             if state!=information.get_state(square):
                 changes.append(square)
                 information.update_state(square,state)
-        reroute_required = False
         update_list = []
         # check if any of the corrections affect the current route.
         for square in changes:
@@ -69,4 +109,4 @@ def simulation(information,environment,start,end,alpha=1,beta=1):
             step+=1
         else :
             break
-    return [cost,record,strategies,journey_complete]
+    return [cost,collisions,record,strategies,journey_complete]

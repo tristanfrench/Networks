@@ -44,9 +44,11 @@ def find_path(grid,start,end,alpha=1,beta=1):
     paths = []
     for state in range(0,num_squares):
         squ = index2coord(state,grid.get_width())
+#        print(squ)
         estimate[state] = alpha*grid.get_heuristic(squ)+beta*grid.get_risk(squ)
         paths.append([start])
     optimal_path = []
+#    print(estimate)
     # add the start point to the frontier with a cost of zero.
     start_index = coord2index(start,grid.get_width())
     frontier[start_index] = 1

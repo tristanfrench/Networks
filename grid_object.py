@@ -7,6 +7,9 @@ Created on Mon Mar 19 22:52:22 2018
 
 import numpy as np
 import T_grid
+from random import randint as rnd
+
+
 
 labels = {'empty':0,'obstacle':1,'start':2,'end':4.5}
 
@@ -33,6 +36,7 @@ class grid:
         '''
         self.__width = size[0]
         self.__height = size[1]
+        self.__area = self.__width * self.__height
         self.__start=start
         self.__end=end
         self.__states = np.zeros((self.__width,self.__height))
@@ -227,5 +231,44 @@ class grid:
                 self.__colour[step[0]][step[1]]+=3.5
     def show_me(self,x=[]):
         T_grid.draw_grid(self.__colour)
+    
+    def random_obs(self,obs_number,occupied=[]):
+        '''
+        Creates obs_number of obstacles randomly, anywhere that isn't in the occupied list
+        occupied should be a list of coordinates such as: [[0,0],[5,4]]
+        '''
+        #exit if there are too many obstacles and not enough empty spaces
+        if obs_number > self.__area - len(occupied):
+            print('TOO MANY OBSTACLES')
+            return None
+        
+        #if occupied isn't empty
+        if occupied != []:
+            for i in range(0,obs_number):  
+                obs_placed=False #remains false until the obstacle is placed
+                while obs_placed==False:
+                    #make 2 random coordinates
+                    row=rnd(0,self.__height-1)
+                    col=rnd(0,self.__width-1)          
+                    #check if coordinate is not empty and not in occupied list
+                    if self.__states[row][col]==labels['empty'] and [row,col] not in occupied :                
+                        self.__states[row][col]=labels['obstacle']
+                        obs_placed=True
+        #if occupied empty
+        else:
+            for i in range(0,obs_number):  
+                obs_placed=False #remains false until the obstacle is placed
+                while obs_placed==False:
+                    #make 2 random coordinates
+                    row=rnd(0,self.__height-1)
+                    col=rnd(0,self.__width-1)          
+                    if self.__states[row][col]==labels['empty']:                
+                        self.__states[row][col]=labels['obstacle']
+                        obs_placed=True
+                    
+            
+            
+            
+    
     
     

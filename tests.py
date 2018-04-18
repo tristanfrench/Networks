@@ -24,6 +24,7 @@ print(test1.get_state())
 ##print(test1.get_heuristic())
 #result1 = search.find_path(test1,startA,endA)
 ##print(result1)
+<<<<<<< HEAD
 
 sizeA = (3,3)
 startA = [0,0]
@@ -62,6 +63,21 @@ print(result1)
 #env.update_heuristic(endB)
 #
 #results3 = journey.simulation(inf,env,[0,0],[9,9])
+=======
+##test2 = grid_object.grid(sizeA,startA,endA,[[1,1]])
+##result2 = search.find_path(test2,startA,endA)
+
+sizeB = (10,10)
+ob1 = [[3,4],[4,4],[3,3],[4,5]]
+ob2 = [[6,8],[7,8],[8,8],[9,8]]
+obstacles = ob1+ob2
+startB = [0,0]
+endB = [9,9]
+#
+inf = grid_object.grid(sizeB,[],startB,endB)
+inf.update_risk()
+inf.update_heuristic(endB)
+>>>>>>> 47a64b6712358be09cab82d06e479af7b8910a84
 
 #sizeB = (10,10)
 #ob1 = [[3,4],[4,4],[3,3],[4,5]]
@@ -89,6 +105,15 @@ print(result1)
 #env.show_me()
 #print('BWANANA!!!!!x2')
 
+<<<<<<< HEAD
+=======
+move_prob1 = [1,0,0,0,0,0,0,0]
+move_prob2 = [0.9,0.1,0,0,0,0,0,0]
+
+results3 = journey.simulation(inf,env,[0,0],[9,9],move_prob2)
+env.update_path_colour(results3[2])
+env.show_me()
+>>>>>>> 47a64b6712358be09cab82d06e479af7b8910a84
 #env.update_path_colour (results3[1])
 #env.show_me()
 ##print(results3)

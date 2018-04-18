@@ -11,6 +11,13 @@ import grid_object
 import search
 
 def dev(prob):
+    '''
+    Randomly selects a deviation index based on the probabilities specified.
+    'prob' is a 1x8 vector whose sum must be equal to 1. Element 0 represents
+    the probability of a drone completing it's intended movement; element n
+    represents the probability of the drone being deflected nx45 degrees
+    clockwise from its intended movement.
+    '''
     value = np.random.uniform()
     cum_prob = np.cumsum(prob)
     for p in range(0,len(cum_prob)):

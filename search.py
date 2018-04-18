@@ -42,6 +42,7 @@ def find_path(grid,start,end,alpha=1,beta=1):
     # initialise estimate values (based on risk and heuristic) and paths.
     estimate = np.zeros((num_squares,1))
     paths = []
+<<<<<<< HEAD
 
     for state in range(0,num_squares):
         squ = index2coord(state,grid.get_width())
@@ -52,9 +53,14 @@ def find_path(grid,start,end,alpha=1,beta=1):
         squ = index2coord(index,grid.get_width())
         estimate[index] = alpha*grid.get_heuristic(squ)+beta*grid.get_risk(squ)
 
+=======
+    for index in range(0,num_squares):
+        square = index2coord(index,grid.get_width())
+        estimate[index] = (alpha*grid.get_heuristic(square)+
+                           beta*grid.get_risk(square))
+>>>>>>> 47a64b6712358be09cab82d06e479af7b8910a84
         paths.append([start])
     optimal_path = []
-#    print(estimate)
     # add the start point to the frontier with a cost of zero.
     start_index = coord2index(start,grid.get_width())
     frontier[start_index] = 1

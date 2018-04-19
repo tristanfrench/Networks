@@ -62,4 +62,3 @@ env.show_me()
 ##real_cost = results3[0]
 #perfect_path = search.find_path(env,startB,endB)
 #best_cost = perfect_path[0]
-#print(best_cost)

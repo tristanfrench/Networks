@@ -99,3 +99,6 @@ def collision_chance(grid,path,move_prob):
                 chance+=move_prob[bad_ind+action_ind]
         chance_list.append(chance)
     return chance_list
+
+def find_multiple_paths(grid,start,checkpoints):
+    return 0

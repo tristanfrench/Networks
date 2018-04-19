@@ -105,6 +105,16 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
                 square in route):
                 reroute_required = True
         information.update_risk(update_list)
+        
+        
+        
+        next_sight1 = information.vision_field(route[step+1])
+        
+        
+        
+        
+        
+        
         if reroute_required:
             plan = search.find_path(information,record[step],end,alpha,beta)
             # define new strategy as "journey so far" plus path to destination.

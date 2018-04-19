@@ -30,7 +30,8 @@ print(test1.get_state())
 sizeB = (10,10)
 ob1 = [[3,4],[4,4],[3,3],[4,5]]
 ob2 = [[6,8],[7,8],[8,8],[9,8]]
-obstacles = ob1+ob2
+ob3 = [[2,5],[3,4],[4,3],[5,2]]
+obstacles = ob1+ob2+ob3
 startB = [0,0]
 endB = [9,9]
 #
@@ -49,7 +50,7 @@ move_prob1 = [1,0,0,0,0,0,0,0]
 move_prob2 = [0.9,0.1,0,0,0,0,0,0]
 move_prob3 = [0.8,0.1,0,0,0,0,0,0.1]
 
-results3 = journey.simulation(inf,env,[0,0],[9,9],move_prob3)
+results3 = journey.simulation(inf,env,[0,0],[9,9],move_prob1)
 env.update_path_colour(results3[2])
 env.show_me()
 #env.update_path_colour (results3[1])

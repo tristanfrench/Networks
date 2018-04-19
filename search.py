@@ -84,3 +84,18 @@ def find_path(grid,start,end,alpha=1,beta=1):
         return [total_cost[0],optimal_path]
     else :
         return [inf_cost,paths]
+        
+def collision_chance(grid,path,move_prob):
+    chance_list = []
+    for s in range(0,len(path)-1):
+        chance = 0
+        obstacles = grid.neighbours(path[s],grid_object.labels['obstacles'])
+        if len(obstacles)!=0:
+            action = [path[s+1][0]-path[s][0],path[s+1][1]-path[s][1]]
+            action_ind = grid_object.directions.index(action)
+            for ob in obstacles:
+                bad_move = [ob[0]-path[s][0],ob[1]-path[s][1]]
+                bad_ind = grid_object.directions.index(bad_move)
+                chance+=move_prob[bad_ind+action_ind]
+        chance_list.append(chance)
+    return chance_list

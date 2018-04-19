@@ -47,8 +47,9 @@ env.update_heuristic(endB)
 
 move_prob1 = [1,0,0,0,0,0,0,0]
 move_prob2 = [0.9,0.1,0,0,0,0,0,0]
+move_prob3 = [0.8,0.1,0,0,0,0,0,0.1]
 
-results3 = journey.simulation(inf,env,[0,0],[9,9],move_prob2)
+results3 = journey.simulation(inf,env,[0,0],[9,9],move_prob3)
 env.update_path_colour(results3[2])
 env.show_me()
 #env.update_path_colour (results3[1])

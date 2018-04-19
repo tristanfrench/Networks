@@ -100,5 +100,11 @@ def collision_chance(grid,path,move_prob):
         chance_list.append(chance)
     return chance_list
 
-def find_multiple_paths(grid,start,checkpoints):
-    return 0
+def calculate_adjacency(grid,start,goal_list,alpha=1,beta=1):
+    node_list = [start]+goal_list
+    matrix = np.zeros((len(node_list),len(node_list)))
+    for n1 in len(node_list):
+        for n2 in len(node_list):
+            summary = find_path(grid,node_list[n1],node_list[n2],alpha,beta)
+            matrix[n1][n2] = summary[0]
+    return matrix

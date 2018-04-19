@@ -105,12 +105,14 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
                 square in route):
                 reroute_required = True
         information.update_risk(update_list)
+        # (Potentially a redundant check???)
         next_sight = information.vision_field(route[step+1])
         if ((step+1<len(route) and not route[step+1] in sight) or 
             (step+2<len(route) and not route[step+2] in next_sight)):
             reroute_required = True
         if reroute_required:
-            plan = search.find_path(information,record[step],end,alpha,beta)
+            plan = search.find_path(information,record[step],end,
+                                         alpha,beta)
             # define new strategy as "journey so far" plus path to destination.
             strategies.append(record[0:step]+plan[1])
             # update 'route' to be the most recently devised path.

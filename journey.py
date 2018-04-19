@@ -106,12 +106,10 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
                 reroute_required = True
         information.update_risk(update_list)
         
-        
-        
-        next_sight1 = information.vision_field(route[step+1])
-        
-        
-        
+        next_sight = information.vision_field(route[step+1])
+        if ((step+1<len(route) and not route[step+1] in sight) or 
+            (step+2<len(route) and not route[step+2] in next_sight)):
+            reroute_required = True
         
         
         

@@ -34,7 +34,8 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
     risk to be used when finding paths.
     '''
     # Calculate initial plan and store the path found as the first strategy.
-    plan = search.schedule_paths(information,start,[end],alpha=1,beta=1)
+    plan = search.schedule_paths(information,start,[end],move_prob,
+                                 alpha=1,beta=1)
     strategies = [plan[1]]
     # update 'route' to be the most recently devised path.
     route = strategies[-1]
@@ -59,9 +60,10 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
             move_intent = [route[step][0]-record[step-1][0],
                            route[step][1]-record[step-1][1]]
             total_moves = len(grid_object.directions)
-            for d_num in range(0,total_moves):
-                if grid_object.directions[d_num]==move_intent:
-                    break
+            d_num = grid_object.directions.index(move_intent)
+            ##for d_num in range(0,total_moves):
+            ##    if grid_object.directions[d_num]==move_intent:
+            ##        break
             move_actual = grid_object.directions[(d_num+deviated)%total_moves]
             trajectory = [record[step-1][0]+move_actual[0],
                           record[step-1][1]+move_actual[1]]
@@ -113,7 +115,7 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
                 reroute_required = True
         if reroute_required:
             plan = search.schedule_paths(information,record[step],[end],
-                                         alpha,beta)
+                                         move_prob,alpha,beta)
             # define new strategy as "journey so far" plus path to destination.
             strategies.append(record[0:step]+plan[1])
             # update 'route' to be the most recently devised path.

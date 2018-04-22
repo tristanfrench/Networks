@@ -69,7 +69,12 @@ class grid:
         '''
         Updates the state of a specified grid square.
         '''
-        self.__states[coord[0]][coord[1]] = value
+        if self.__states[coord[0]][coord[1]]!=value:
+            self.__states[coord[0]][coord[1]] = value
+            if value==labels['empty']:
+                self.__total_obs-=1
+            elif value==labels['obstacle']:
+                self.__total_obs+=1
     
     def get_state(self,coord=[]):
         '''

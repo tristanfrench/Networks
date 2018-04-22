@@ -82,9 +82,9 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
                     cost[child_index] = new_cost
                     frontier[child_index] = 1
                     paths[child_index] = paths[index]+[child]
-                    coll_prob = collision_chance(grid,paths[child_index],
+                    coll_prob = collision_chance(grid,[paths[child_index]],
                                                  move_prob)
-                    collides[child_index] = sum(coll_prob)
+                    collides[child_index] = sum(coll_prob[0])
         # reset cost of explored grid square.
         cost[index] = inf_cost
     if not goal_reached:
@@ -134,14 +134,14 @@ def collision_chance(grid,path_list,move_prob):
         chance_list = []
         for s in range(0,len(path)-1):
             chance = 0
-            obstacles = grid.neighbours(path[s],grid_object.labels['obstacles'])
+            obstacles = grid.neighbours(path[s],grid_object.labels['obstacle'])
             if len(obstacles)!=0:
                 action = [path[s+1][0]-path[s][0],path[s+1][1]-path[s][1]]
                 action_ind = grid_object.directions.index(action)
                 for ob in obstacles:
                     bad_move = [ob[0]-path[s][0],ob[1]-path[s][1]]
                     bad_ind = grid_object.directions.index(bad_move)
-                    chance+=move_prob[bad_ind+action_ind]
+                    chance+=move_prob[(bad_ind+action_ind)%len(move_prob)]
             chance*=move_prob[0]**s
             chance_list.append(chance)
         coll_mat.append(chance_list)

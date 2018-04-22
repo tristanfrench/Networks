@@ -16,7 +16,7 @@ startA = [0,0]
 endA = [2,2]
 #obs=[0,2]
 ##print(obs)
-test1 = grid_object.grid(sizeA,[],startA,endA)
+test1 = grid_object.grid(sizeA,[],0)
 test1.random_obs(3,[startA,endA])
 #test1.update_risk()
 print(test1.get_state())

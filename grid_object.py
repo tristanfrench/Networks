@@ -48,7 +48,7 @@ class grid:
             self.__states[ob[0]][ob[1]] = labels['obstacle']
             self.__colour[ob[0]][ob[1]] = labels['obstacle']
         self.__total_obs = len(obstacles)
-        self.__capacity = max([total_obs,capacity])
+        self.__capacity = max([self.__total_obs,capacity])
         self.__risk = np.zeros((self.__width,self.__height))
         self.update_risk()
         self.__heuristic = np.zeros((self.__width,self.__height))
@@ -229,7 +229,7 @@ class grid:
                 neighbs.append(square)
         return neighbs
     
-    def update_path_colour(self,coord_list=[],start,end):
+    def update_path_colour(self,coord_list,start,end):
         '''
         Updates the colour of the path taken from start to end.
         '''

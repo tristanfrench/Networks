@@ -19,7 +19,7 @@ endA = [2,2]
 test1 = grid_object.grid(sizeA,[],0)
 test1.random_obs(3,[startA,endA])
 #test1.update_risk()
-print(test1.get_state())
+#print(test1.get_state())
 #test1.update_heuristic(endA)
 ##print(test1.get_heuristic())
 #result1 = search.find_path(test1,startA,endA)
@@ -45,7 +45,7 @@ move_prob1 = [1,0,0,0,0,0,0,0]
 move_prob2 = [0.9,0.1,0,0,0,0,0,0]
 move_prob3 = [0.8,0.1,0,0,0,0,0,0.1]
 
-results3 = journey.simulation(inf,env,startB,endB,move_prob1)
+results3 = journey.simulation(inf,env,startB,[endB],move_prob1)
 env.update_path_colour(results3[2],startB,endB)
 env.show_me()
 #env.update_path_colour (results3[1])

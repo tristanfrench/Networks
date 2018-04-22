@@ -109,7 +109,7 @@ def schedule_paths(grid,start,ordered_goals,move_prob,alpha=1,beta=1):
         combined_route = combined_route+plan[1][1:]
     return [combined_cost,combined_route]
 
-def calculate_adjacency(grid,start,goal_list,move_prob,alpha=1,beta=1):
+def adjacency(grid,start,goal_list,move_prob,alpha=1,beta=1):
     '''
     Constructs the adjacency matrix for 'grid' squares in the union of 'start'
     and 'goal_list'. Each entry of the matrix is the cost of the optimal path

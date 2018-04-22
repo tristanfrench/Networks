@@ -234,14 +234,14 @@ class grid:
                 neighbs.append(square)
         return neighbs
     
-    def update_path_colour(self,coord_list,start,end):
+    def update_path_colour(self,coord_list,start,goals):
         '''
         Updates the colour of the path taken from start to end.
         '''
         for step in coord_list:
             if step==start:
                 self.__colour[step[0]][step[1]] = labels['start']
-            elif step==end:
+            elif step in goals:
                 self.__colour[step[0]][step[1]] = labels['end']
             else :
                 self.__colour[step[0]][step[1]] = labels['path']

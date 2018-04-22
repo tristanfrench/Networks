@@ -34,6 +34,7 @@ ob3 = [[2,5],[3,4],[4,3],[5,2]]
 obstacles = ob1+ob2+ob3
 startB = [0,0]
 endB = [9,9]
+endC = [1,7]
 #
 env = grid_object.grid(sizeB,obstacles,len(obstacles))
 env.update_heuristic(endB)
@@ -45,8 +46,8 @@ move_prob1 = [1,0,0,0,0,0,0,0]
 move_prob2 = [0.9,0.1,0,0,0,0,0,0]
 move_prob3 = [0.8,0.1,0,0,0,0,0,0.1]
 
-results3 = journey.simulation(inf,env,startB,[endB],move_prob1)
-env.update_path_colour(results3[2],startB,endB)
+results3 = journey.simulation(inf,env,startB,[endB,endC],move_prob1)
+env.update_path_colour(results3[2],startB,[endB,endC])
 env.show_me()
 #env.update_path_colour (results3[1])
 #env.show_me()

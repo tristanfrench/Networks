@@ -9,7 +9,7 @@ import numpy as np
 import T_grid
 from random import randint as rnd
 
-labels = {'empty':0,'obstacle':1,'start':2,'end':4.5,'path':3.5}
+labels = {'empty':0,'obstacle':1,'start':2,'radar':2.5,'end':4.5,'path':3.5}
 directions = [[1,1],[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1],[0,1]]
 
 def p2_dist(a,b):
@@ -307,10 +307,14 @@ class grid:
                 if self.get_state([x,y])==value:
                     coord_list.append([x,y])
                     
-    def sense(self,coord,dist):
+    def sense(self,coord,dist,show=False):
         squares_list = []
         for x in range(0,self.__width):
             for y in range(0,self.__height):
                 if p2_dist([x,y],coord)<=dist:
                     squares_list.append([x,y])
+                    if show==True:
+                        self.__colour[x][y]=labels['radar']
+
+            
         return squares_list

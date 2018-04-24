@@ -207,9 +207,10 @@ class grid:
         Stores the values of the heuristic for each grid square, calculated
         as the euclidean distance between grid squares and a goal square.
         '''
-        for x in range(0,self.__width):
-            for y in range(0,self.__height):
-                self.__heuristic[x][y] = p2_dist([x,y],goal)
+        if len(goal)>0:
+            for x in range(0,self.__width):
+                for y in range(0,self.__height):
+                    self.__heuristic[x][y] = p2_dist([x,y],goal)
     
     def get_heuristic(self,coord=[]):
         '''
@@ -234,14 +235,14 @@ class grid:
                 neighbs.append(square)
         return neighbs
     
-    def update_path_colour(self,coord_list,start,end):
+    def update_path_colour(self,coord_list,start,goals):
         '''
         Updates the colour of the path taken from start to end.
         '''
         for step in coord_list:
             if step==start:
                 self.__colour[step[0]][step[1]] = labels['start']
-            elif step==end:
+            elif step in goals:
                 self.__colour[step[0]][step[1]] = labels['end']
             else :
                 self.__colour[step[0]][step[1]] = labels['path']
@@ -298,3 +299,18 @@ class grid:
         Increases the maximum number of obstacles for the grid.
         '''
         self.__capacity+=obs_number
+        
+    def get_coords(self,value):
+        coord_list = []
+        for x in range(0,self.__width):
+            for y in range(0,self.__height):
+                if self.get_state([x,y])==value:
+                    coord_list.append([x,y])
+                    
+    def sense(self,coord,dist):
+        squares_list = []
+        for x in range(0,self.__width):
+            for y in range(0,self.__height):
+                if p2_dist([x,y],coord)<=dist:
+                    squares_list.append([x,y])
+        return squares_list

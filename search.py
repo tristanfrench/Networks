@@ -116,13 +116,14 @@ def schedule_paths(grid,start,ordered_goals,move_prob,alpha=1,beta=1):
     combined_cost = 0
     combined_route = [start]
     for n in range(0,len(ordered_goals)):
+        grid.update_heuristic(ordered_goals(n))
         plan = find_path(grid,checkpoints[n],checkpoints[n+1],move_prob,
                          alpha,beta)
         combined_cost+=plan[0]
         combined_route = combined_route+plan[1][1:]
     return [combined_cost,combined_route]
 
-def calculate_adjacency(grid,start,goal_list,move_prob,alpha=1,beta=1):
+def adjacency(grid,start,goal_list,move_prob,alpha=1,beta=1):
     '''
     Constructs the adjacency matrix for 'grid' squares in the union of 'start'
     and 'goal_list'. Each entry of the matrix is the cost of the optimal path

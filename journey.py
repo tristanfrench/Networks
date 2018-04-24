@@ -25,7 +25,7 @@ def dev(prob):
             return p
     return []
 
-def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
+def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
     '''
     Runs a theoretical simulation of a drone travelling through a grid trying
     to get from 'start' to 'end'. 'information' represents the drones knowledge
@@ -33,9 +33,15 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
     surrounds.'alpha' and 'beta' represent the weightings of the heuristic and
     risk to be used when finding paths.
     '''
+    remaining_goals = goals
+    Adj = search.adjacency(information,start,remaining_goals,
+                           move_prob,alpha,beta)
+    # LAUREN - TODO: add travelling salesman code here...
+    # ordered_goals = f(Adj)
+    ordered_goals = remaining_goals
     # Calculate initial plan and store the path found as the first strategy.
-    plan = search.schedule_paths(information,start,[end],move_prob,
-                                 alpha=1,beta=1)
+    plan = search.schedule_paths(information,start,ordered_goals,
+                                 move_prob,alpha=1,beta=1)
     strategies = [plan[1]]
     # update 'route' to be the most recently devised path.
     route = strategies[-1]
@@ -83,9 +89,11 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
             record[step]==record[step-1]==record[step-2]==record[step-3]):
             break
         # terminate if the current square is the destination.
-        if record[step]==end:
-            journey_complete = True
-            break
+        if record[step] in remaining_goals:
+            remaining_goals.remove(record[step])
+            if len(remaining_goals)==0:
+                journey_complete = True
+                break
         # identify squares in the current field of vision.
         sight = environment.vision_field(record[step])
         changes = []
@@ -114,8 +122,13 @@ def simulation(information,environment,start,end,move_prob,alpha=1,beta=1):
                 (step+2<len(route) and not route[step+2] in next_sight)):
                 reroute_required = True
         if reroute_required:
-            plan = search.schedule_paths(information,record[step],[end],
-                                         move_prob,alpha,beta)
+            Adj = search.adjacency(information,record[step],remaining_goals,
+                                   move_prob,alpha,beta)
+            # LAUREN - TODO: add travelling salesman code here...
+            # ordered_goals = f(Adj)
+            ordered_goals = remaining_goals
+            plan = search.schedule_paths(information,record[step],
+                                         ordered_goals,move_prob,alpha,beta)
             # define new strategy as "journey so far" plus path to destination.
             strategies.append(record[0:step]+plan[1])
             # update 'route' to be the most recently devised path.

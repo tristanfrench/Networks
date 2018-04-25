@@ -10,6 +10,8 @@ import numpy as np
 import grid_object
 import search
 
+outputs = {'cost':0,'collisions':1,'record':2,'strategies':3,'complete':4}
+
 def dev(prob):
     '''
     Randomly selects a deviation index based on the probabilities specified.
@@ -33,7 +35,9 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
     surrounds.'alpha' and 'beta' represent the weightings of the heuristic and
     risk to be used when finding paths.
     '''
-    remaining_goals = goals
+    remaining_goals = []
+    for g in goals:
+        remaining_goals.append(g)
     Adj = search.adjacency(information,start,remaining_goals,
                            move_prob,alpha,beta)
     # LAUREN - TODO: add travelling salesman code here...
@@ -41,7 +45,7 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
     ordered_goals = remaining_goals
     # Calculate initial plan and store the path found as the first strategy.
     plan = search.schedule_paths(information,start,ordered_goals,
-                                 move_prob,alpha=1,beta=1)
+                                 move_prob,alpha,beta)
     strategies = [plan[1]]
     # update 'route' to be the most recently devised path.
     route = strategies[-1]

@@ -86,7 +86,7 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
                     coll_prob = collision_chance(grid,[paths[child_index]],
                                                  move_prob)
                     collides[child_index] = sum(coll_prob[0])
-                    informed[child_index] = informativeness(paths[child_index])
+                    informed[child_index] = informativeness(grid,paths[child_index])
         # reset cost of explored grid square.
         cost[index] = inf_cost
     if not goal_reached:
@@ -105,7 +105,7 @@ def schedule_paths(grid,start,ordered_goals,move_prob,alpha=1,beta=1):
     combined_cost = 0
     combined_route = [start]
     for n in range(0,len(ordered_goals)):
-        grid.update_heuristic(ordered_goals(n))
+        grid.update_heuristic(ordered_goals[n])
         plan = find_path(grid,checkpoints[n],checkpoints[n+1],move_prob,
                          alpha,beta)
         combined_cost+=plan[0]

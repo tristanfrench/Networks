@@ -25,3 +25,16 @@ def radar_iteration(grid):
         
         
     #2nd phase
+    
+    #first need to get to the goal point found
+    #set objective square as goal?
+    #once you've reached goal
+    #continue in direction, find change in heuristics, if positive
+    past_H=get_heuristic([_,_])
+    future_H=get_heuristic([_,_])
+    if future_H-past_H<0:
+        #do stuff, heuristic decreased
+    else:
+        #pick different direction
+        
+    

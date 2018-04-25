@@ -29,6 +29,9 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     represents the relative weighting of the heuristic and 'beta' represents
     the relative weighting of the risk factors.
     '''
+    no_goal = 0
+    if len(end)==0:
+        no_goal = 1
     # initialise flags for explored and frontier sets.
     num_squares = grid.get_width()*grid.get_height()
     explored = np.zeros((num_squares,1))
@@ -59,7 +62,7 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     goal_reached = False
     while sum(frontier)>0:
         # find a grid square index in the frontier set with minimal cost.
-        index = np.argmin((3-alpha-beta)*cost+estimate+beta*collides,axis=0)
+        index = np.argmin((3-alpha-beta)*cost+estimate+beta*collides+alpha*informed*no_goal,axis=0)
         index = index[0]
         explored[index] = 1
         frontier[index] = 0
@@ -86,7 +89,8 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
                     coll_prob = collision_chance(grid,[paths[child_index]],
                                                  move_prob)
                     collides[child_index] = sum(coll_prob[0])
-                    informed[child_index] = informativeness(grid,paths[child_index])
+                    informed[child_index] = radar_iteration(grid,
+                            paths[child_index])
         # reset cost of explored grid square.
         cost[index] = inf_cost
     if not goal_reached:
@@ -150,5 +154,19 @@ def collision_chance(grid,path_list,move_prob):
         coll_mat.append(chance_list)
     return coll_mat
 
-def informativeness(grid,path):
-    return 0
+def non_overlap(memory,coord):
+    #coord here is position of drone
+    sensed=grid.sense(coord,3)
+    non_overlap=[x for x in sensed if x not in memory]
+    return non_overlap
+    
+def radar_iteration(grid,possible_squares):
+    memory=[]
+    
+    #1st phase
+ 
+        #loop through all possible squares and extract the number of non overlapping squares
+    for square in possible_squares:
+        memory+=non_overlap(memory,square)
+
+    return len(memory)

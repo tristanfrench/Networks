@@ -154,7 +154,7 @@ def collision_chance(grid,path_list,move_prob):
         coll_mat.append(chance_list)
     return coll_mat
 
-def non_overlap(memory,coord):
+def non_overlap(grid,memory,coord):
     #coord here is position of drone
     sensed=grid.sense(coord,3)
     non_overlap=[x for x in sensed if x not in memory]
@@ -167,6 +167,6 @@ def radar_iteration(grid,possible_squares):
  
         #loop through all possible squares and extract the number of non overlapping squares
     for square in possible_squares:
-        memory+=non_overlap(memory,square)
+        memory+=non_overlap(grid,memory,square)
 
     return len(memory)

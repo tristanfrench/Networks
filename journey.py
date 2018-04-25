@@ -6,6 +6,7 @@ Created on Wed Mar 28 22:37:24 2018
 """
 
 import numpy as np
+import itertools as it
 
 import grid_object
 import search
@@ -40,9 +41,10 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
         remaining_goals.append(g)
     Adj = search.adjacency(information,start,remaining_goals,
                            move_prob,alpha,beta)
-    # LAUREN - TODO: add travelling salesman code here...
-    # ordered_goals = f(Adj)
-    ordered_goals = remaining_goals
+    order = travelling_salesman(Adj)
+    ordered_goals = []
+    for i in order:
+        ordered_goals.append(remaining_goals[i-1])
     # Calculate initial plan and store the path found as the first strategy.
     plan = search.schedule_paths(information,start,ordered_goals,
                                  move_prob,alpha,beta)
@@ -128,9 +130,10 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
         if reroute_required:
             Adj = search.adjacency(information,record[step],remaining_goals,
                                    move_prob,alpha,beta)
-            # LAUREN - TODO: add travelling salesman code here...
-            # ordered_goals = f(Adj)
-            ordered_goals = remaining_goals
+            order = travelling_salesman(Adj)
+            ordered_goals = []
+            for i in order:
+                ordered_goals.append(remaining_goals[i-1])
             plan = search.schedule_paths(information,record[step],
                                          ordered_goals,move_prob,alpha,beta)
             # define new strategy as "journey so far" plus path to destination.
@@ -143,3 +146,35 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
         else :
             break
     return [cost,collisions,record,strategies,journey_complete]
+
+def travelling_salesman(Adj):
+    #inf = float('inf')
+    d = Adj
+    
+    points = range(0,d.shape[0])
+    
+    combinations = list(it.permutations(points,len(points)))
+    
+    total_distances=[]
+    
+    for i in range(len(combinations)):
+        summation=0
+        if combinations[i][0] == 0:
+            for j in range(len(combinations[i])-1):
+                #if j==3:
+                #    continue
+                #else:
+                summation += d[combinations[i][j]][combinations[i][j+1]]
+            total_distances.append(summation)
+        
+    #min_dist=min(total_distances)
+    
+    for i in total_distances:
+        if i==min(total_distances):
+            index=total_distances.index(i)
+            x=list(combinations[index])
+        else:
+            continue
+        del x[0]
+            
+    return x

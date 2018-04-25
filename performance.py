@@ -30,8 +30,6 @@ def analyse(environment,knowledge,movement,num_goals,
                 spaces.remove(square)
         goals.append(spaces[np.random.randint(0,len(spaces))])
     goals.remove(start)
-    print(start)
-    print(goals)
     size = (environment.get_width(),environment.get_height())
     results = []
     for k in knowledge:
@@ -57,7 +55,7 @@ def analyse(environment,knowledge,movement,num_goals,
                             collisions.append(run[journey.outputs['collisions']])
                     av_cost = sum(costs)/len(costs)
                     av_coll = sum(collisions)/len(collisions)
-                    results.append([k,m,a,b,av_cost,av_coll])
+                    results.append([k,m,a,b,av_cost,av_coll,start,goals])
     return results
 
 def display(results):

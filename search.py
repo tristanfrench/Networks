@@ -41,27 +41,15 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     total_cost = 0
     # initialise estimate values (based on knowledge risk and heuristic) and 
     # movement risk - chance of drone colliding at least one along a path.
+    informed = np.zeros((num_squares,1))
     collides = np.zeros((num_squares,1))
     estimate = np.zeros((num_squares,1))
     # initialise paths to grid squares.
     paths = []
-<<<<<<< HEAD
-
-    for state in range(0,num_squares):
-        squ = index2coord(state,grid.get_width())
-#        print(squ)
-        estimate[state] = alpha*grid.get_heuristic(squ)+beta*grid.get_risk(squ)
-
-    for index in range(0,num_squares):
-        squ = index2coord(index,grid.get_width())
-        estimate[index] = alpha*grid.get_heuristic(squ)+beta*grid.get_risk(squ)
-
-=======
     for index in range(0,num_squares):
         square = index2coord(index,grid.get_width())
         estimate[index] = (alpha*grid.get_heuristic(square)+
                            beta*grid.get_risk(square))
->>>>>>> 47a64b6712358be09cab82d06e479af7b8910a84
         paths.append([start])
     optimal_path = []
     # add the start point to the frontier with a cost of zero.
@@ -98,6 +86,7 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
                     coll_prob = collision_chance(grid,[paths[child_index]],
                                                  move_prob)
                     collides[child_index] = sum(coll_prob[0])
+                    informed[child_index] = informativeness(paths[child_index])
         # reset cost of explored grid square.
         cost[index] = inf_cost
     if not goal_reached:
@@ -160,3 +149,6 @@ def collision_chance(grid,path_list,move_prob):
             chance_list.append(chance)
         coll_mat.append(chance_list)
     return coll_mat
+
+def informativeness(grid,path):
+    return 0

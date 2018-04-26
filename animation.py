@@ -9,5 +9,4 @@ def path_animation(grid,path):
         grid_seen[square[0]][square[1]]=3.5
         draw_grid(grid_seen,True)
 
-            
     return grid_seen

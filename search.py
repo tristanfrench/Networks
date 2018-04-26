@@ -44,7 +44,7 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     total_cost = 0
     # initialise estimate values (based on knowledge risk and heuristic) and 
     # movement risk - chance of drone colliding at least one along a path.
-    informed = np.zeros((num_squares,1))
+    ##informed = num_squares*np.ones((num_squares,1))
     collides = np.zeros((num_squares,1))
     estimate = np.zeros((num_squares,1))
     # initialise paths to grid squares.
@@ -62,12 +62,14 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     goal_reached = False
     while sum(frontier)>0:
         # find a grid square index in the frontier set with minimal cost.
-        index = np.argmin((3-alpha-beta)*cost+estimate+beta*collides+alpha*informed*no_goal,axis=0)
+        #print('hello')
+        #print(sum(frontier))
+        index = np.argmin((3-alpha-beta)*cost+estimate+beta*collides,axis=0)
         index = index[0]
         explored[index] = 1
         frontier[index] = 0
         # if the destination / goal is reached record cost and path, then exit.
-        if index==coord2index(end,grid.get_width()):
+        if not no_goal and index==coord2index(end,grid.get_width()):
             total_cost = cost[index]
             optimal_path = paths[index]
             goal_reached = True
@@ -79,21 +81,32 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
             if child in grid.vision_field(parent):
                 # cost formula.
                 new_cost = cost[index]+grid_object.p2_dist(child,parent)
+                ##new_path = paths[index]+[child]
+                ##new_informed = num_squares-radar_iteration(grid,new_path)
                 child_index = coord2index(child,grid.get_width())
                 # if a less expensive path is found to an unexplored square
                 # update cost, estimate, frontier, path and collision risk.
-                if (explored[child_index]==0 and new_cost<cost[child_index]):
-                    cost[child_index] = new_cost
+                if explored[child_index]==0 and new_cost<cost[child_index]:
                     frontier[child_index] = 1
+                    ##if new_cost<cost[child_index]:
+                    cost[child_index] = new_cost
                     paths[child_index] = paths[index]+[child]
                     coll_prob = collision_chance(grid,[paths[child_index]],
                                                  move_prob)
                     collides[child_index] = sum(coll_prob[0])
-                    informed[child_index] = radar_iteration(grid,
-                            paths[child_index])
+                    #informed[child_index] = radar_iteration(grid,
+                            ##paths[child_index])
         # reset cost of explored grid square.
         cost[index] = inf_cost
     if not goal_reached:
+        if no_goal:
+            informed = np.zeros((num_squares,1))
+            for index in range(0,num_squares):
+                informed[index] = radar_iteration(grid,paths[index])
+            final_square = np.argmax(informed)
+            final_cost = cost[final_square]
+            print('yay')
+            return [final_cost[0],paths[final_square]]
         return [inf_cost,paths]
     else :
         return [total_cost[0],optimal_path]
@@ -110,7 +123,7 @@ def schedule_paths(grid,start,ordered_goals,move_prob,alpha=1,beta=1):
     combined_route = [start]
     for n in range(0,len(ordered_goals)):
         grid.update_heuristic(ordered_goals[n])
-        plan = find_path(grid,checkpoints[n],checkpoints[n+1],move_prob,
+        plan = find_path(grid,checkpoints[n],ordered_goals[n],move_prob,
                          alpha,beta)
         combined_cost+=plan[0]
         combined_route = combined_route+plan[1][1:]

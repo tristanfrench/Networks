@@ -326,11 +326,11 @@ class grid:
                     squares_list.append([x,y])
                     if show==True:
                         self.__colour[x][y]=labels['radar']
-<<<<<<< HEAD
+
 
             
         return squares_list
-=======
+
         return squares_list
     
     def set_goals(self,goals):
@@ -340,4 +340,4 @@ class grid:
     
     def get_goals(self):
         return self.__goals
->>>>>>> e5f0919b7d3f2bd77d44b98737da234a3737b8e5
+

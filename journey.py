@@ -36,16 +36,20 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
     surrounds.'alpha' and 'beta' represent the weightings of the heuristic and
     risk to be used when finding paths.
     '''
+    #environment.set_goals(goals)
     remaining_goals = []
-    for g in goals:
-        remaining_goals.append(g)
-    Adj = search.adjacency(information,start,remaining_goals,
-                           move_prob,alpha,beta)
+    for g1 in environment.get_goals():
+        remaining_goals.append(g1)
+    known_goals = []
+    for g2 in information.get_goals():
+        known_goals.append(g2)
+    Adj = search.adjacency(information,start,known_goals,move_prob,alpha,beta)
     order = travelling_salesman(Adj)
     ordered_goals = []
     for i in order:
-        ordered_goals.append(remaining_goals[i-1])
+        ordered_goals.append(known_goals[i-1])
     # Calculate initial plan and store the path found as the first strategy.
+    information.set_goals(ordered_goals)
     plan = search.schedule_paths(information,start,ordered_goals,
                                  move_prob,alpha,beta)
     strategies = [plan[1]]
@@ -95,8 +99,9 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
             record[step]==record[step-1]==record[step-2]==record[step-3]):
             break
         # terminate if the current square is the destination.
-        if record[step] in remaining_goals:
+        if record[step] in remaining_goals and record[step] in known_goals:
             remaining_goals.remove(record[step])
+            known_goals.remove(record[step])
             if len(remaining_goals)==0:
                 journey_complete = True
                 break
@@ -109,6 +114,9 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
             if state!=information.get_state(square):
                 changes.append(square)
                 information.update_state(square,state)
+            if square in remaining_goals and not square in known_goals:
+                known_goals.append(square)
+                reroute_required = True
         update_list = []
         # check if any of the corrections affect the current route.
         for square in changes:
@@ -120,20 +128,30 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
             if (information.get_state(square)==grid_object.labels['empty'] or
                 square in route):
                 reroute_required = True
+        information.have_seen(sight)
         information.update_risk(update_list)
+        for goal in remaining_goals:
+            if (goal in information.radar_field(record[step]) and
+                not goal in known_goals):
+                information.construct_heuristic(record[step],
+                                                record[step-1],goal)
         # Potentially a redundant check??? - Answer: no it's definitely not!
         if step+1<len(route):
             next_sight = information.vision_field(route[step+1])
             if (not route[step+1] in sight or 
                 (step+2<len(route) and not route[step+2] in next_sight)):
                 reroute_required = True
+        if step+1==len(route):
+            reroute_required = True
         if reroute_required:
-            Adj = search.adjacency(information,record[step],remaining_goals,
+            information.set_goals(known_goals)
+            Adj = search.adjacency(information,record[step],known_goals,
                                    move_prob,alpha,beta)
             order = travelling_salesman(Adj)
             ordered_goals = []
             for i in order:
-                ordered_goals.append(remaining_goals[i-1])
+                ordered_goals.append(known_goals[i-1])
+            information.set_goals(ordered_goals)
             plan = search.schedule_paths(information,record[step],
                                          ordered_goals,move_prob,alpha,beta)
             # define new strategy as "journey so far" plus path to destination.

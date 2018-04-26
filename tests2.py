@@ -49,11 +49,12 @@ move_prob1 = [1,0,0,0,0,0,0,0]
 move_prob2 = [0.9,0.1,0,0,0,0,0,0]
 move_prob3 = [0.8,0.1,0,0,0,0,0,0.1]
 env.set_goals([endB,endC])
-#inf.set_goals([endB,endC])
+inf.set_goals([endB,endC])
 results3 = journey.simulation(inf,env,startB,[endB,endC],move_prob1)
+#plt.close('all')
 #env.update_path_colour(results3[2],startB,[endB,endC])
 #env.show_me()
-print('hi')
+
 animation.path_animation(env,results3[2])
 '''
 env2 = grid_object.grid(sizeB,obstacles,len(obstacles))

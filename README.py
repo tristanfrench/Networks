@@ -76,7 +76,7 @@ CONTENTS:
             #each set of results averaged over 5 simulations*...
             results1 = performance.analyse(env,knowledge,[movement[0]],
                                            num_goals[1],min_dist[2],
-                                           [alphas[10]],[betas[10]],repeat[5])
+                                           [alphas[10]],[betas[10]],repeat[5],[1,0])
             
                 *NOTE: since in this case the movement is deterministic,
                 averaging over multiple simulations is not necessary as the
@@ -86,14 +86,14 @@ CONTENTS:
             #knowledge and the same conditions as above...
             results2 = performance.analyse(env,[knowledge[0]],movement,
                                            num_goals[1],min_dist[2],
-                                           [alphas[10]],[betas[10]],repeat[5])
+                                           [alphas[10]],[betas[10]],repeat[5],[1,0])
             
             #to instead test pairs of alpha and beta values when there is no
             #initial knowledge and a 10% chance that the drone will deviate at
             #each step...
             results3 = performance.analyse(env,[knowledge[0]],[movement[1]],
                                            num_goals[1],min_dist[2],
-                                           alphas,betas,repeat[5])
+                                           alphas,betas,repeat[5],[1,0])
             
         - outputs:
             results = a list of vectors containing the results of each set of

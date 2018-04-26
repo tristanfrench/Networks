@@ -102,10 +102,11 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
         if no_goal:
             informed = np.zeros((num_squares,1))
             for index in range(0,num_squares):
-                informed[index] = radar_iteration(grid,paths[index])
+                informed[index] = grid.radar_iteration(paths[index],
+                        grid.memory())
             final_square = np.argmax(informed)
             final_cost = cost[final_square]
-            print('yay')
+            #print('yay')
             return [final_cost[0],paths[final_square]]
         return [inf_cost,paths]
     else :
@@ -118,13 +119,13 @@ def schedule_paths(grid,start,ordered_goals,move_prob,alpha=1,beta=1):
     weighting of the heuristic and 'beta' represents the relative weighting
     of the risk factors.
     '''
-    checkpoints = [start]+ordered_goals
+    checkpoints = [start]+grid.get_goals()
     combined_cost = 0
     combined_route = [start]
-    for n in range(0,len(ordered_goals)):
-        grid.update_heuristic(ordered_goals[n])
-        plan = find_path(grid,checkpoints[n],ordered_goals[n],move_prob,
-                         alpha,beta)
+    for n in range(0,len(grid.get_goals())):
+        grid.update_heuristic(checkpoints[n+1])
+        plan = find_path(grid,checkpoints[n],checkpoints[n+1],
+                         move_prob,alpha,beta)
         combined_cost+=plan[0]
         combined_route = combined_route+plan[1][1:]
     return [combined_cost,combined_route]
@@ -167,19 +168,17 @@ def collision_chance(grid,path_list,move_prob):
         coll_mat.append(chance_list)
     return coll_mat
 
-def non_overlap(grid,memory,coord):
-    #coord here is position of drone
-    sensed=grid.sense(coord,3)
-    non_overlap=[x for x in sensed if x not in memory]
-    return non_overlap
-    
-def radar_iteration(grid,possible_squares):
-    memory=[]
-    
-    #1st phase
- 
-        #loop through all possible squares and extract the number of non overlapping squares
-    for square in possible_squares:
-        memory+=non_overlap(grid,memory,square)
-
-    return len(memory)
+#def non_overlap(grid,memory,coord):
+#    #coord here is position of drone
+#    sensed=grid.radar_field(coord)
+#    non_overlap=[x for x in sensed if x not in memory]
+#    return non_overlap
+#    
+#def radar_iteration(grid,possible_squares,memory):
+#    new_memory = []
+#    #1st phase
+#        #loop through all possible squares and extract the number of non overlapping squares
+#    for square in possible_squares:
+#        new_memory+=non_overlap(grid,memory+new_memory,square)
+#
+#    return len(new_memory)

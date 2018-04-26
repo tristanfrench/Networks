@@ -28,7 +28,7 @@ class grid:
     __vision_range = 3
     __goals = []
     ##__directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]
-    
+    __seen = []
     def __init__(self,size,obstacles,capacity=0):
         '''
         'size' is a vector that defines the dimensions of the grid. 'obstacles'
@@ -36,10 +36,10 @@ class grid:
         '''
         self.__width = size[0]
         self.__height = size[1]
-        self.__area = self.__width * self.__height
+        self.__area = self.__width*self.__height
+        self.__sense_range = self.__width+self.__height
         self.__states = np.zeros((self.__width,self.__height))
         self.__colour = np.zeros((self.__width,self.__height))
-        self.__seen = np.zeros((self.__width,self.__height))
         # int is used because states will contain discrete classifications.
         self.__states = self.__states.astype(int)
         ##self.__start=start
@@ -169,6 +169,10 @@ class grid:
         defined as the the likelihood of finding an unexpected obstacle in a
         grid square multiplied by the number of known neighbouring obstacles.
         '''
+        aware = self.get_coords(labels['obstacle'])
+        for s in self.__seen:
+            if not s in aware:
+                aware.append(s)
         if len(coord_list)==0:
             for x in range(0,self.__width):
                 for y in range(0,self.__height):
@@ -180,7 +184,7 @@ class grid:
                             labels['obstacle']):
                             surrounding_obstacles+=1
                     unknown = ((self.__capacity-self.__total_obs)/
-                               (self.__area-self.__total_obs))
+                               (self.__area-len(aware)))
                     self.__risk[x][y] = unknown*surrounding_obstacles
         else :
             for i in range(0,len(coord_list)):
@@ -192,7 +196,9 @@ class grid:
                         self.__states[square[0]][square[1]]==
                         labels['obstacle']):
                         surrounding_obstacles+=1
-                self.__risk[coord[0]][coord[1]] = surrounding_obstacles
+                unknown = ((self.__capacity-self.__total_obs)/
+                               (self.__area-len(aware)))
+                self.__risk[coord[0]][coord[1]] = unknown*surrounding_obstacles
     
     def get_risk(self,coord=[]):
         '''
@@ -248,15 +254,13 @@ class grid:
                 self.__colour[step[0]][step[1]] = labels['end']
             else :
                 self.__colour[step[0]][step[1]] = labels['path']
-                       
-        return np.multiply(self.__seen,self.__colour)
     
     def show_me(self):
         '''
         Displays grid in command window.
         '''
         T_grid.draw_grid(self.__colour)
-        
+    
     def get_colour(self,coord):
         '''
         return colour of specific square
@@ -318,26 +322,56 @@ class grid:
                     coord_list.append([x,y])
         return coord_list
                     
-    def sense(self,coord,dist,show=False):
+    def radar_field(self,coord,show=False):
         squares_list = []
         for x in range(0,self.__width):
             for y in range(0,self.__height):
-                if p2_dist([x,y],coord)<=dist:
+                if p2_dist([x,y],coord)<=self.__sense_range:
                     squares_list.append([x,y])
                     if show==True:
                         self.__colour[x][y]=labels['radar']
-
-
-            
-        return squares_list
-
         return squares_list
     
     def set_goals(self,goals):
         self.__goals = []
         for g in goals:
-            self.__goals.append(goals[g])
+            self.__goals.append(g)
     
     def get_goals(self):
         return self.__goals
-
+    
+    def update_sense_range(self,dist):
+        self.__sense_range = dist
+    
+    def get_sense_range(self):
+        return self.__sense_range
+            
+    def have_seen(self,new_coords):
+        for square in new_coords:
+            if not square in self.__seen:
+                self.__seen.append(square)
+    
+    def memory(self):
+        return self.__seen
+    
+    def non_overlap(self,memory,coord):
+        #coord here is position of drone
+        sensed=self.radar_field(coord)
+        non_overlap=[x for x in sensed if x not in memory]
+        return non_overlap
+    
+    def radar_iteration(self,possible_squares,memory):
+        new_memory = []
+        #1st phase
+        #loop through all possible squares and extract the number of non overlapping squares
+        for square in possible_squares:
+            new_memory+=self.non_overlap(memory+new_memory,square)
+        return len(new_memory)
+        
+#    def construct_heuristic(self,current,last,goal):
+#        clue = 0
+#        if p2_dist(current,goal)<p2_dist(last,goal):
+#            clue = 1
+#        elif p2_dist(current,goal)>p2_dist(last,goal):
+#            clue = -1
+        

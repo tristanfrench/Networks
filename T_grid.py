@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def draw_grid(data):
-    plt.close("all")
+def draw_grid(data,wait_for=False):
+#    plt.close("all")
 #    data=data*10000
     X,Y=np.shape(data)    
     # make a figure + axes
@@ -16,12 +16,15 @@ def draw_grid(data):
     ax.imshow(data, interpolation='none', cmap='brg', extent=[0, Y, 0, X])    
     # turn off the axis labels
     ax.axis('off')
+    if wait_for==True:
+        plt.waitforbuttonpress()
     
 
 
 
 # Example:
-#data = np.zeros((15,20))*100
+#data = np.zeros((15,20))
+#data[0,0]=None
 #data[0,:]=1
 #data[1,:]=1
 #data[2,:]=1

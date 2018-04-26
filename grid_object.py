@@ -38,6 +38,7 @@ class grid:
         self.__area = self.__width * self.__height
         self.__states = np.zeros((self.__width,self.__height))
         self.__colour = np.zeros((self.__width,self.__height))
+        self.__seen = np.zeros((self.__width,self.__height))
         # int is used because states will contain discrete classifications.
         self.__states = self.__states.astype(int)
         ##self.__start=start
@@ -246,12 +247,20 @@ class grid:
                 self.__colour[step[0]][step[1]] = labels['end']
             else :
                 self.__colour[step[0]][step[1]] = labels['path']
+                       
+        return np.multiply(self.__seen,self.__colour)
     
     def show_me(self):
         '''
         Displays grid in command window.
         '''
         T_grid.draw_grid(self.__colour)
+        
+    def get_colour(self,coord):
+        '''
+        return colour of specific square
+        '''
+        return self.__colour[coord[0]][coord[1]]
     
     def random_obs(self,obs_number,occupied=[]):
         '''

@@ -7,6 +7,10 @@ def draw_grid(data,wait_for=False):
 #    data=data*10000
     X,Y=np.shape(data)    
     # make a figure + axes
+    for col in range(0,X):
+        for row in range(0,Y):
+            if data[row,col]==0:
+                data[row,col]=None
     fig, ax = plt.subplots(1, 1, tight_layout=True)
     for x in range(X + 1):
         ax.axhline(x, lw=2, color='k')

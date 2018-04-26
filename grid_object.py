@@ -29,6 +29,7 @@ class grid:
     __goals = []
     ##__directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]
     __seen = []
+    __scanned = []
     def __init__(self,size,obstacles,capacity=0):
         '''
         'size' is a vector that defines the dimensions of the grid. 'obstacles'
@@ -215,10 +216,12 @@ class grid:
         Stores the values of the heuristic for each grid square, calculated
         as the euclidean distance between grid squares and a goal square.
         '''
-        if len(goal)>0:
-            for x in range(0,self.__width):
-                for y in range(0,self.__height):
+        for x in range(0,self.__width):
+            for y in range(0,self.__height):
+                if len(goal)>0:
                     self.__heuristic[x][y] = p2_dist([x,y],goal)
+                else :
+                    self.__heuristic[x][y] = 0
     
     def get_heuristic(self,coord=[]):
         '''
@@ -342,17 +345,26 @@ class grid:
     
     def update_sense_range(self,dist):
         self.__sense_range = dist
+        self.__heuristic = dist*np.ones((self.__width,self.__height))
     
     def get_sense_range(self):
         return self.__sense_range
-            
+    
     def have_seen(self,new_coords):
         for square in new_coords:
             if not square in self.__seen:
                 self.__seen.append(square)
     
-    def memory(self):
+    def have_scanned(self,new_coords):
+        for square in new_coords:
+            if not square in self.__scanned:
+                self.__scanned.append(square)
+    
+    def get_seen(self):
         return self.__seen
+    
+    def get_scanned(self):
+        return self.__scanned
     
     def non_overlap(self,memory,coord):
         #coord here is position of drone
@@ -368,10 +380,25 @@ class grid:
             new_memory+=self.non_overlap(memory+new_memory,square)
         return len(new_memory)
         
-#    def construct_heuristic(self,current,last,goal):
-#        clue = 0
-#        if p2_dist(current,goal)<p2_dist(last,goal):
-#            clue = 1
-#        elif p2_dist(current,goal)>p2_dist(last,goal):
-#            clue = -1
-        
+    def construct_heuristic(self,curr,last,goal):
+        clue = 0
+        if p2_dist(curr,goal)<p2_dist(last,goal):
+            clue = 1
+        elif p2_dist(curr,goal)>p2_dist(last,goal):
+            clue = -1
+        #update_list = self.radar_field(current)
+        #better_square = current
+        #worse_square = last
+        #if clue==-1:
+        #    update_list = self.radar_field(last)
+        #    better_square = last
+        #    worse_square = current
+        for x in range(0,self.get_width()):
+            for y in range(0,self.get_height()):
+                if ((clue==1 and (p2_dist([x,y],curr)>p2_dist([x,y],last) or
+                                  p2_dist([x,y],curr)>self.__sense_range)) or
+                    (clue==-1 and (p2_dist([x,y],last)>p2_dist([x,y],curr) or
+                                   p2_dist([x,y],last)>self.__sense_range)) or
+                    (clue==0 and (p2_dist([x,y],curr)!=p2_dist([x,y],last) or
+                                  p2_dist([x,y],curr)>self.__sense_range))):
+                    self.__heuristic[x][y]+=1

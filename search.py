@@ -32,6 +32,7 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     no_goal = 0
     if len(end)==0:
         no_goal = 1
+    #print(no_goal)
     # initialise flags for explored and frontier sets.
     num_squares = grid.get_width()*grid.get_height()
     explored = np.zeros((num_squares,1))
@@ -46,13 +47,13 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     # movement risk - chance of drone colliding at least one along a path.
     ##informed = num_squares*np.ones((num_squares,1))
     collides = np.zeros((num_squares,1))
-    estimate = np.zeros((num_squares,1))
+    estimate = np.zeros((num_squares,2))
     # initialise paths to grid squares.
     paths = []
     for index in range(0,num_squares):
         square = index2coord(index,grid.get_width())
-        estimate[index] = (alpha*grid.get_heuristic(square)+
-                           beta*grid.get_risk(square))
+        estimate[index][0] = grid.get_heuristic(square)
+        estimate[index][1] = grid.get_risk(square)
         paths.append([start])
     optimal_path = []
     # add the start point to the frontier with a cost of zero.
@@ -64,7 +65,8 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
         # find a grid square index in the frontier set with minimal cost.
         #print('hello')
         #print(sum(frontier))
-        index = np.argmin((3-alpha-beta)*cost+estimate+beta*collides,axis=0)
+        index = np.argmin((3-alpha-beta)*cost+alpha*estimate[0:][0]+
+                          beta*estimate[0:][1]+beta*collides,axis=0)
         index = index[0]
         explored[index] = 1
         frontier[index] = 0
@@ -75,6 +77,7 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
             goal_reached = True
             break
         parent = index2coord(index,grid.get_width())
+        #print(['parent',parent])
         children = grid.neighbours(parent,grid_object.labels['empty'])
         # explore each grid square that can be moved to from current position.
         for child in children:
@@ -100,25 +103,39 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
         cost[index] = inf_cost
     if not goal_reached:
         if no_goal:
+            #print(paths)
+            final_square = 0
+            #if sum(estimate[1:][0]-estimate[0:-1][0])==0:
             informed = np.zeros((num_squares,1))
             for index in range(0,num_squares):
                 informed[index] = grid.radar_iteration(paths[index],
-                        grid.memory())
-            final_square = np.argmax(informed)
+                        grid.get_scanned())
+            min_heur = np.argmin(estimate[0:][0])
+            consider = []
+            sub_inform = []
+            for i in range(0,num_squares):
+                if estimate[i][0]==estimate[min_heur][0]:
+                    consider.append(i)
+                    sub_inform.append(informed[i])
+            final_square = consider[sub_inform.index(max(sub_inform))]
+            final_square = np.argmax(informed)#################################
             final_cost = cost[final_square]
-            #print('yay')
             return [final_cost[0],paths[final_square]]
-        return [inf_cost,paths]
+        else :
+            return [inf_cost,paths]
     else :
         return [total_cost[0],optimal_path]
 
-def schedule_paths(grid,start,ordered_goals,move_prob,alpha=1,beta=1):
+def schedule_paths(grid,start,ordered_goals22,move_prob,alpha=1,beta=1):
     '''
     Calculates an optimal path through 'grid' from 'start' which visits each
     square in 'ordered_goals' in turn. 'alpha' represents the relative 
     weighting of the heuristic and 'beta' represents the relative weighting
     of the risk factors.
     '''
+    if len(grid.get_goals())==0:
+        wander = find_path(grid,start,[],move_prob,alpha,beta)
+        return wander
     checkpoints = [start]+grid.get_goals()
     combined_cost = 0
     combined_route = [start]

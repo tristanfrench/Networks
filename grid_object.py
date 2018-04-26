@@ -26,6 +26,7 @@ class grid:
     simply stores vectors for horizontal, vertical and diagonal movements.
     '''
     __vision_range = 3
+    __goals = []
     ##__directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]
     
     def __init__(self,size,obstacles,capacity=0):
@@ -306,6 +307,7 @@ class grid:
             for y in range(0,self.__height):
                 if self.get_state([x,y])==value:
                     coord_list.append([x,y])
+        return coord_list
                     
     def sense(self,coord,dist,show=False):
         squares_list = []
@@ -315,6 +317,12 @@ class grid:
                     squares_list.append([x,y])
                     if show==True:
                         self.__colour[x][y]=labels['radar']
-
-            
         return squares_list
+    
+    def set_goals(self,goals):
+        self.__goals = []
+        for g in goals:
+            self.__goals.append(goals[g])
+    
+    def get_goals(self):
+        return self.__goals

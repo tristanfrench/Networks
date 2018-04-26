@@ -36,6 +36,7 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
     surrounds.'alpha' and 'beta' represent the weightings of the heuristic and
     risk to be used when finding paths.
     '''
+    #environment.set_goals(goals)
     remaining_goals = []
     for g in goals:
         remaining_goals.append(g)

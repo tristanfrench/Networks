@@ -15,6 +15,7 @@ parameters = {'knowledge':0,'movement':1,'alpha':2,
 
 def analyse(environment,knowledge,movement,num_goals,
             min_dist,alphas,betas,repeat,scenario):
+    progress = 0
     max_obs = environment.get_capacity()
     obstacles = environment.get_coords(grid_object.labels['obstacle'])
     spaces = environment.get_coords(grid_object.labels['empty'])
@@ -37,6 +38,8 @@ def analyse(environment,knowledge,movement,num_goals,
         num_obs = int(np.floor(k*max_obs))
         initial_obs = []
         for n in range(0,num_obs):
+            if len(obstacles)==0:
+                break
             index = np.random.randint(0,len(obstacles))
             initial_obs.append(obstacles[index])
             obstacles.remove(initial_obs[-1])
@@ -62,9 +65,12 @@ def analyse(environment,knowledge,movement,num_goals,
                         costs.append(perfect[journey.outputs['cost']]-
                                      actual[journey.outputs['cost']])
                         colls.append(actual[journey.outputs['collisions']])
-                av_cost = sum(costs)/len(costs)
-                av_coll = sum(colls)/len(colls)
-                results.append([k,m,a,b,av_cost,av_coll,start,goals])
+                if len(costs)>0:
+                    av_cost = sum(costs)/len(costs)
+                    av_coll = sum(colls)/len(colls)
+                    results.append([k,m,a,b,av_cost,av_coll,start,goals])
+                progress+=1
+                print(progress)
     return results
 
 def display(results,parameter):

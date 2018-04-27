@@ -49,9 +49,11 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
     for i in order:
         ordered_goals.append(known_goals[i-1])
     # Calculate initial plan and store the path found as the first strategy.
+    #print(['ordered_goals',ordered_goals])
     information.set_goals(ordered_goals)
     plan = search.schedule_paths(information,start,ordered_goals,
                                  move_prob,alpha,beta)
+    #print(plan)
     strategies = [plan[1]]
     # update 'route' to be the most recently devised path.
     route = strategies[-1]
@@ -62,6 +64,8 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
     collisions = 0
     journey_complete = False
     while not journey_complete:
+        #print(step)
+        #print(record)
         # compute deviation index.
         deviated = dev(move_prob)
         if step==0:
@@ -128,13 +132,17 @@ def simulation(information,environment,start,goals,move_prob,alpha=1,beta=1):
             if (information.get_state(square)==grid_object.labels['empty'] or
                 square in route):
                 reroute_required = True
-        information.have_seen(sight)
+        information.have_seen(sight)        
+        information.have_scanned(information.radar_field(record[step]))
         information.update_risk(update_list)
-        for goal in remaining_goals:
-            if (goal in information.radar_field(record[step]) and
-                not goal in known_goals):
-                information.construct_heuristic(record[step],
-                                                record[step-1],goal)
+        if len(remaining_goals)!=len(known_goals):
+            for goal in remaining_goals:
+                if (goal in information.radar_field(record[step]) and
+                    not goal in known_goals):
+                    information.construct_heuristic(record[step],
+                                                    record[step-1],goal)
+                    known_goals.append(goal)###################################
+                    reroute_required = True
         # Potentially a redundant check??? - Answer: no it's definitely not!
         if step+1<len(route):
             next_sight = information.vision_field(route[step+1])

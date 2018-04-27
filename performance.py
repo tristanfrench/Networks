@@ -16,10 +16,10 @@ parameters = {'knowledge':0,'movement':1,'alpha':2,
 def analyse(environment,knowledge,movement,num_goals,
             min_dist,alphas,betas,repeat,scenario):
     progress = 0
-    max_obs = environment.get_capacity()
-    obstacles = environment.get_coords(grid_object.labels['obstacle'])
     spaces = environment.get_coords(grid_object.labels['empty'])
     start = spaces[np.random.randint(0,len(spaces))]
+    #################################
+    start = [9,0]
     goals = [start]
     too_close = []
     for g in range(0,num_goals):
@@ -31,10 +31,14 @@ def analyse(environment,knowledge,movement,num_goals,
                 spaces.remove(square)
         goals.append(spaces[np.random.randint(0,len(spaces))])
     goals.remove(start)
+    ####################################
+    goals = [[9,9]]
     environment.set_goals(goals)
     size = (environment.get_width(),environment.get_height())
     results = []
     for k in knowledge:
+        obstacles = environment.get_coords(grid_object.labels['obstacle'])
+        max_obs = environment.get_capacity()
         num_obs = int(np.floor(k*max_obs))
         initial_obs = []
         for n in range(0,num_obs):
@@ -42,7 +46,7 @@ def analyse(environment,knowledge,movement,num_goals,
                 break
             index = np.random.randint(0,len(obstacles))
             initial_obs.append(obstacles[index])
-            obstacles.remove(initial_obs[-1])
+            obstacles.remove(obstacles[index])
         for m in movement:
             move_prob = [1-m,m/2,0,0,0,0,0,m/2]
             for p in range(0,len(alphas)):

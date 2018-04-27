@@ -11,6 +11,7 @@ import journey
 import numpy as np
 import random as rng
 import obstacles_store as os
+import time
 np.set_printoptions(threshold=np.inf)
 
 
@@ -56,7 +57,8 @@ results3 = journey.simulation(inf,env,startB,[endB],move_prob1)
 env.update_path_colour(results3[2],startB,[endB])
 env.show_me()
 
+now = time.strftime('%I-%M-%S%p')
 
-Out = open('obstacle_coords.txt','w')
+Out = open(str(now) + '_obstacle_coords.txt','w')
 Out.write(str(obstacles))
 Out.close()

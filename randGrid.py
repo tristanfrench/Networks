@@ -20,12 +20,13 @@ sizeB = (30,30)
 """obsMax is set to grid size / 2 * the size of a single obstacle, 9
 Ensure that at least half the grid is empty in any generation"""
 obsMax = (sizeB[0] * sizeB[1])/(18) 
+obsMax = int(round(obsMax))
 
 obstacles = []
 for i in range(0,obsMax):
     #max obs size is 3x3, so max rng val must be < 3 away from edge. Avoids overflow error.
-    X = rng.randint(1, 27)
-    Y = rng.randint(1, 27)
+    X = rng.randint(1, (sizeB[0]-3))
+    Y = rng.randint(1, (sizeB[1]-3))
     
     #coin toss for obs shape
     switch = rng.randint(0,1)
@@ -54,10 +55,8 @@ inf.set_goals([endB])
 results3 = journey.simulation(inf,env,startB,[endB],move_prob1)
 env.update_path_colour(results3[2],startB,[endB])
 env.show_me()
-#env.update_path_colour (results3[1])
-#env.show_me()
-##print(results3)
-##real_cost = results3[0]
-#perfect_path = search.find_path(env,startB,endB)
-#best_cost = perfect_path[0]
-#print(best_cost)
+
+
+Out = open('obstacle_coords.txt','w')
+Out.write(str(obstacles))
+Out.close()

@@ -40,7 +40,7 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
     frontier = np.zeros((num_squares,1))
     frontier = frontier.astype(int)
     # initialise cost values.
-    inf_cost = 2*num_squares
+    inf_cost = 1000*num_squares
     cost = inf_cost*np.ones((num_squares,1))
     total_cost = 0
     # initialise estimate values (based on knowledge risk and heuristic) and 

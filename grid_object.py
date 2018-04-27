@@ -264,11 +264,14 @@ class grid:
         '''
         T_grid.draw_grid(self.__colour)
     
-    def get_colour(self,coord):
+    def get_colour(self,coord=0):
         '''
         return colour of specific square
         '''
-        return self.__colour[coord[0]][coord[1]]
+        if len(coord==0):
+            return self.__colour
+        else:
+            return self.__colour[coord[0]][coord[1]]
     
     def random_obs(self,obs_number,occupied=[]):
         '''

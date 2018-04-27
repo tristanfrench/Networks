@@ -19,7 +19,7 @@ def analyse(environment,knowledge,movement,num_goals,
     spaces = environment.get_coords(grid_object.labels['empty'])
     start = spaces[np.random.randint(0,len(spaces))]
     #################################
-    start = [9,0]
+#    start = [9,0]
     goals = [start]
     too_close = []
     for g in range(0,num_goals):
@@ -32,7 +32,7 @@ def analyse(environment,knowledge,movement,num_goals,
         goals.append(spaces[np.random.randint(0,len(spaces))])
     goals.remove(start)
     ####################################
-    goals = [[9,9]]
+#    goals = [[9,9]]
     environment.set_goals(goals)
     size = (environment.get_width(),environment.get_height())
     results = []
@@ -55,7 +55,7 @@ def analyse(environment,knowledge,movement,num_goals,
                 costs = []
                 colls = []
                 perfect = journey.simulation(environment,environment,start,
-                                             goals,[1,0,0,0,0,0,0,0],a,b)
+                                             goals,[1,0,0,0,0,0,0,0])
                 for r in range(0,repeat):
                     information = grid_object.grid(size,initial_obs,max_obs)
                     if scenario[0]==1:
@@ -72,7 +72,8 @@ def analyse(environment,knowledge,movement,num_goals,
                 if len(costs)>0:
                     av_cost = sum(costs)/len(costs)
                     av_coll = sum(colls)/len(colls)
-                    results.append([k,m,a,b,av_cost,av_coll,start,goals])
+                    results.append([k,m,a,b,av_cost,av_coll,start,goals,
+                                    actual[journey.outputs['record']]])
                 progress+=1
                 print(progress)
     return results

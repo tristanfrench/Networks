@@ -204,7 +204,7 @@ class grid:
                     unknown = ((self.__capacity-self.__total_obs)/
                                (self.__area-len(aware)))
                     self.__risk[coord[0]][coord[1]] = (unknown*
-                               (1+surrounding_obstacles)
+                               (1+surrounding_obstacles))
     
     def get_risk(self,coord=[]):
         '''

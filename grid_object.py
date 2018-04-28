@@ -263,11 +263,12 @@ class grid:
         '''
         T_grid.draw_grid(self.__colour)
     
-    def get_colour(self,coord=0):
+    def get_colour(self,coord=[]):
         '''
         return colour of specific square
+        
         '''
-        if len(coord==0):
+        if len(coord)==0:
             return self.__colour
         else:
             return self.__colour[coord[0]][coord[1]]

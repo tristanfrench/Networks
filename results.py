@@ -15,6 +15,9 @@ def get_results(knowledge,movement,results_nb,goals_nb,repeat_nb):
     ob3 = [[2,5],[3,4],[4,3],[5,2]]
     ob4 = [[5,6],[5,7]]
     obstacles=ob1+ob2+ob3#+ob4
+#    
+#    ob1=[[3,4],[3,6],[4,4],[4,6],[5,4],[5,6],[6,4],[6,6],[7,4],[7,6]]
+#    obstacles=ob1
     obstacles = gridStore.obs
     sizeB=(30,30)
     env = grid_object.grid(sizeB,obstacles,len(obstacles))
@@ -45,15 +48,15 @@ def get_results(knowledge,movement,results_nb,goals_nb,repeat_nb):
     repeat = [0,1,2,3,4,5,6,7,8,9,10]
     results=[]
     
-    alphas = alphas_r[1:-1]
-    betas = betas__r[1:-1]
+    alphas = [alphas_r[-2]]
+    betas = [betas__r[-2]]
     alphas = [1]
     betas = [1]
 
     for i in range(0,results_nb):
         results.append(performance.analyse(env,knowledge,movement,
                                    num_goals[goals_nb],min_dist[5],
-                                   alphas,betas,repeat[repeat_nb],[1,0]))
+                                   alphas,betas,repeat[repeat_nb],[2,4]))
 
     env.update_path_colour(results[0][0][-1],results[0][0][-3],results[0][0][-2])
     env.show_me()
@@ -68,7 +71,7 @@ m = [0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5]
 
 results_nb=1
 goals_nb=1
-repeat_nb=3
+repeat_nb=1
 '''
 CHOOSE PARA TO STUDY
 '''

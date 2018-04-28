@@ -19,7 +19,7 @@ def analyse(environment,knowledge,movement,num_goals,
     spaces = environment.get_coords(grid_object.labels['empty'])
     start = spaces[np.random.randint(0,len(spaces))]
     #################################
-#    start = [9,0]
+    start = [0,5]
     goals = [start]
     too_close = []
     for g in range(0,num_goals):
@@ -32,7 +32,7 @@ def analyse(environment,knowledge,movement,num_goals,
         goals.append(spaces[np.random.randint(0,len(spaces))])
     goals.remove(start)
     ####################################
-#    goals = [[9,9]]
+    goals = [[9,5]]
     environment.set_goals(goals)
     size = (environment.get_width(),environment.get_height())
     results = []
@@ -64,8 +64,8 @@ def analyse(environment,knowledge,movement,num_goals,
                         information.update_sense_range(scenario[1])
                     actual = journey.simulation(information,environment,start,
                                                 goals,move_prob,a,b)
-                    if (actual[journey.outputs['complete']] and 
-                        perfect[journey.outputs['complete']]):
+                    if ((actual[journey.outputs['complete']] and 
+                        perfect[journey.outputs['complete']]) or scenario[0]==2):
                         costs.append(perfect[journey.outputs['cost']]-
                                      actual[journey.outputs['cost']])
                         colls.append(actual[journey.outputs['collisions']])

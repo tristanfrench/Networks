@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+
+
+
+
 def draw_grid(data,wait_for=False):
 #    plt.close("all")
 #    data=data*10000
@@ -15,21 +19,13 @@ def draw_grid(data,wait_for=False):
     for x in range(X + 1):
         ax.axhline(x, lw=2, color='k')
     for y in range(Y+1):
-        ax.axvline(y, lw=2, color='k')         
-    # draw the boxes
+        ax.axvline(y, lw=2, color='k')  
+   
+#     draw the boxes
     ax.imshow(data, interpolation='none', cmap='brg', extent=[0, Y, 0, X])    
-    # turn off the axis labels
+#     turn off the axis labels
     ax.axis('off')
     if wait_for==True:
         plt.waitforbuttonpress()
+    return data
     
-
-
-
-# Example:
-#data = np.zeros((15,20))
-#data[0,0]=None
-#data[0,:]=1
-#data[1,:]=1
-#data[2,:]=1
-#draw_grid(data)

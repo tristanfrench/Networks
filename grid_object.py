@@ -177,29 +177,34 @@ class grid:
         if len(coord_list)==0:
             for x in range(0,self.__width):
                 for y in range(0,self.__height):
+                    self.__risk[x][y] = 0
+                    if [x,y] not in aware:
+                        surrounding_obstacles = 0
+                        for d in directions:
+                            square = [x+d[0],y+d[1]]
+                            if (self.is_in_grid(square) and
+                                self.__states[square[0]][square[1]]==
+                                labels['obstacle']):
+                                surrounding_obstacles+=1
+                        unknown = ((self.__capacity-self.__total_obs)/
+                                   (self.__area-len(aware)))
+                        self.__risk[x][y] = unknown*surrounding_obstacles
+        else :
+            for i in range(0,len(coord_list)):
+                coord = coord_list[i]
+                self.__risk[coord[0]][coord[1]] = 0
+                if coord not in aware:
                     surrounding_obstacles = 0
                     for d in directions:
-                        square = [x+d[0],y+d[1]]
+                        square = [coord[0]+d[0],coord[1]+d[1]]
                         if (self.is_in_grid(square) and
                             self.__states[square[0]][square[1]]==
                             labels['obstacle']):
                             surrounding_obstacles+=1
                     unknown = ((self.__capacity-self.__total_obs)/
                                (self.__area-len(aware)))
-                    self.__risk[x][y] = unknown*surrounding_obstacles
-        else :
-            for i in range(0,len(coord_list)):
-                coord = coord_list[i]
-                surrounding_obstacles = 0
-                for d in directions:
-                    square = [coord[0]+d[0],coord[1]+d[1]]
-                    if (self.is_in_grid(square) and
-                        self.__states[square[0]][square[1]]==
-                        labels['obstacle']):
-                        surrounding_obstacles+=1
-                unknown = ((self.__capacity-self.__total_obs)/
-                               (self.__area-len(aware)))
-                self.__risk[coord[0]][coord[1]] = unknown*surrounding_obstacles
+                    self.__risk[coord[0]][coord[1]] = (unknown*
+                               surrounding_obstacles)
     
     def get_risk(self,coord=[]):
         '''

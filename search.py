@@ -66,7 +66,8 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
         #print('hello')
         #print(sum(frontier))
         index = np.argmin((3-alpha-beta)*cost+alpha*estimate[0:][0]+
-                          beta*estimate[0:][1]+beta*collides,axis=0)
+                          beta*estimate[0:][1]+beta*collides
+                          +inf_cost*(1-frontier),axis=0)
         index = index[0]
         explored[index] = 1
         frontier[index] = 0
@@ -96,11 +97,11 @@ def find_path(grid,start,end,move_prob,alpha=1,beta=1):
                     paths[child_index] = paths[index]+[child]
                     coll_prob = collision_chance(grid,[paths[child_index]],
                                                  move_prob)
-                    collides[child_index] = sum(coll_prob[0])
+                    collides[child_index] = 3*sum(coll_prob[0])
                     #informed[child_index] = radar_iteration(grid,
                             ##paths[child_index])
         # reset cost of explored grid square.
-        cost[index] = inf_cost
+        #cost[index] = inf_cost
     if not goal_reached:
         if no_goal:
             #print(paths)

@@ -13,8 +13,8 @@ def get_results(knowledge,movement,results_nb,goals_nb,repeat_nb):
     ob1 = [[3,4],[4,4],[3,3],[4,5]]
     ob2 = [[6,8],[7,8],[8,8],[9,8]]
     ob3 = [[2,5],[3,4],[4,3],[5,2]]
-#    ob4 = [[5,6],[5,7]]
-#    obstacles=ob1+ob2+ob3#+ob4
+    ob4 = [[5,6],[5,7]]
+    obstacles=ob1+ob2+ob3#+ob4
     obstacles = gridStore.obs
     sizeB=(30,30)
     env = grid_object.grid(sizeB,obstacles,len(obstacles))
@@ -67,7 +67,7 @@ m = [0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5]
 
 
 results_nb=1
-goals_nb=2
+goals_nb=1
 repeat_nb=3
 '''
 CHOOSE PARA TO STUDY

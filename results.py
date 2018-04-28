@@ -24,7 +24,7 @@ def get_results(knowledge,movement,results_nb,goals_nb,repeat_nb):
                 #create parameter vectors...
     
     num_goals = [0,1,2,3,4,5,6,7,8,9,10]
-    min_dist = [0,1,2,3,4,5,6,7,8,9,10]
+    min_dist = [0,1,2,3,4,5,6,7,8,9,10,15]
     '''
     alpha is heuristic
     beta is risk
@@ -47,10 +47,12 @@ def get_results(knowledge,movement,results_nb,goals_nb,repeat_nb):
     
     alphas = alphas_r[1:-1]
     betas = betas__r[1:-1]
+    alphas = [1]
+    betas = [1]
 
     for i in range(0,results_nb):
         results.append(performance.analyse(env,knowledge,movement,
-                                   num_goals[goals_nb],min_dist[2],
+                                   num_goals[goals_nb],min_dist[5],
                                    alphas,betas,repeat[repeat_nb],[1,0]))
 
     env.update_path_colour(results[0][0][-1],results[0][0][-3],results[0][0][-2])
@@ -64,13 +66,13 @@ m = [0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5]
 
 
 
-results_nb=3
+results_nb=1
 goals_nb=2
-repeat_nb=1
+repeat_nb=3
 '''
 CHOOSE PARA TO STUDY
 '''
-PARA='r'
+PARA='k'
 
 print('COLLECTING RESULTS')
 if PARA=='m':
